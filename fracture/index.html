@@ -223,23 +223,25 @@
   }
 
   .artwork-inner {
-    flex: 1;
+    position: absolute;
+    inset: 0;
     display: none;
     flex-direction: column;
   }
 
   .artwork-image-wrap {
     flex: 1;
-    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
     background: #050505;
     overflow: hidden;
   }
 
   .artwork-img {
-    position: absolute;
-    inset: 28px;
-    width: calc(100% - 56px);
-    height: calc(100% - 56px);
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     transition: transform 0.6s ease;
   }
