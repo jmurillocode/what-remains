@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fracture — JCode</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #080808;
+    --gold:     #b89a56;
+    --text:     #c8c8c8;
+    --text-dim: #555;
+    --border:   rgba(184,154,86,0.15);
+    --panel-bg: #0d0d0d;
+  }
+
+  html, body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 200;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 48px;
+    background: linear-gradient(to bottom, rgba(8,8,8,0.95) 70%, transparent);
+  }
+
+  .nav-back {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .nav-back:hover { color: var(--gold); }
+  .nav-back:hover svg { transform: translateX(-3px); }
+  .nav-back svg { transition: transform 0.3s; }
+
+  .nav-title {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0 48px;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .hero-left { padding-right: 80px; }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+  }
+
+  .hero-title {
+    font-family: 'Lora', serif;
+    font-size: clamp(64px, 8vw, 110px);
+    font-weight: 400;
+    line-height: 1.0;
+    color: #e8e8e8;
+    letter-spacing: -0.02em;
+    margin-bottom: 44px;
+  }
+
+  .hero-divider {
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+    margin-bottom: 32px;
+  }
+
+  .hero-statement {
+    font-family: 'Lora', serif;
+    font-size: 15px;
+    line-height: 1.85;
+    color: var(--text-dim);
+    max-width: 460px;
+  }
+
+  .hero-statement p + p { margin-top: 20px; }
+
+  /* Process tags */
+  .process-layers {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 40px;
+  }
+
+  .process-layer {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .layer-num {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    white-space: nowrap;
+    margin-top: 2px;
+    min-width: 60px;
+  }
+
+  .layer-text {
+    font-size: 12px;
+    line-height: 1.65;
+    color: #444;
+  }
+
+  .layer-label {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 2px;
+  }
+
+  .hero-right {
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 3px;
+    overflow: hidden;
+  }
+
+  .hero-right img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #060606;
+    padding: 10px;
+    filter: grayscale(30%) brightness(0.55);
+    transition: filter 1s ease;
+  }
+
+  .hero-right:hover img { filter: grayscale(0%) brightness(0.85); }
+
+  .hero-scroll-cue {
+    position: absolute;
+    bottom: 40px;
+    left: 48px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    cursor: pointer;
+  }
+
+  .hero-scroll-cue svg { animation: bounce 2s ease-in-out infinite; }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(5px); }
+  }
+
+  /* ── GALLERY ── */
+  .gallery {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* Left: sticky artwork panel */
+  .artwork-panel {
+    width: 52%;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    background: #050505;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .artwork-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    color: var(--text-dim);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: opacity 0.4s;
+  }
+
+  .artwork-empty-line {
+    width: 40px;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .artwork-inner {
+    flex: 1;
+    display: none;
+    flex-direction: column;
+  }
+
+  .artwork-image-wrap {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    background: #050505;
+  }
+
+  .artwork-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.6s ease;
+  }
+
+  .artwork-panel:hover .artwork-img { transform: scale(1.01); }
+
+  .artwork-info {
+    padding: 28px 40px;
+    background: var(--panel-bg);
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .artwork-series {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .artwork-title {
+    font-family: 'Lora', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: #e8e8e8;
+    line-height: 1.3;
+  }
+
+  /* ── WORK LIST ── */
+  .work-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 80px 0 80px 0;
+    scrollbar-width: none;
+  }
+  .work-list::-webkit-scrollbar { display: none; }
+
+  .work-entry {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    padding: 0 48px 48px 48px;
+    cursor: pointer;
+    transition: background 0.3s;
+    position: relative;
+  }
+
+  .work-entry::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: transparent;
+    transition: background 0.3s;
+  }
+
+  .work-entry:hover::before,
+  .work-entry.active::before { background: var(--gold); }
+
+  .work-entry:hover { background: rgba(184,154,86,0.03); }
+  .work-entry.active { background: rgba(184,154,86,0.05); }
+
+  .work-thumb-wrap {
+    width: 88px;
+    height: 88px;
+    overflow: hidden;
+    margin-top: 4px;
+    flex-shrink: 0;
+    background: #0a0a0a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .work-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 4px;
+    filter: grayscale(100%) brightness(0.35);
+    transition: filter 0.5s ease;
+  }
+
+  .work-entry:hover .work-thumb { filter: grayscale(20%) brightness(0.75); }
+  .work-entry.active .work-thumb { filter: grayscale(0%) brightness(0.9); box-shadow: 0 0 0 1px var(--gold); }
+
+  .work-entry-body { padding-left: 24px; }
+
+  .work-entry-num {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .work-entry-title {
+    font-family: 'Lora', serif;
+    font-size: 17px;
+    font-weight: 400;
+    color: #c0c0c0;
+    line-height: 1.35;
+    transition: color 0.3s;
+  }
+
+  .work-entry.active .work-entry-title { color: #f0f0f0; }
+
+  .work-entry-tag {
+    margin-top: 10px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: #333;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+
+  .work-entry.active .work-entry-tag { color: var(--text-dim); }
+
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-back" href="../index.html">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <line x1="13" y1="7" x2="1" y2="7" stroke="currentColor" stroke-width="1"/>
+      <polyline points="5,2 0,7 5,12" stroke="currentColor" stroke-width="1" fill="none"/>
+    </svg>
+    JCode
+  </a>
+  <span class="nav-title">Fracture</span>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Generative · AI · Portrait Series</p>
+    <h1 class="hero-title">Fracture</h1>
+    <div class="hero-divider"></div>
+    <div class="hero-statement">
+      <p>A generative art project that integrates artificial intelligence — the first series to deeply embed AI into the creative workflow. An exploration into what it means to exist within the digital world.</p>
+      <p>Each piece depicts a fragmented portrait, mirroring the way we fragment our own identities across digital platforms. These abstractions open a dialogue about the tension between genuine identity and the carefully constructed personas we share with the world.</p>
+    </div>
+
+    <div class="process-layers">
+      <div class="process-layer">
+        <span class="layer-num">Layer 01</span>
+        <div>
+          <p class="layer-label">Composition</p>
+          <p class="layer-text">Distorted grid, Voronoi polygons and Delaunay triangulations establish the structural backbone.</p>
+        </div>
+      </div>
+      <div class="process-layer">
+        <span class="layer-num">Layer 02</span>
+        <div>
+          <p class="layer-label">Colour &amp; Stroke</p>
+          <p class="layer-text">Algorithmic brush strokes and colour applied across the fragmented composition, mimicking organic texture.</p>
+        </div>
+      </div>
+      <div class="process-layer">
+        <span class="layer-num">Layer 03</span>
+        <div>
+          <p class="layer-label">AI Rendering</p>
+          <p class="layer-text">A trained model refines and synthesises — structured generative logic meets expressive painterly abstraction.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <img src="artworks-web/i-tried-to-be-seen.jpg" alt="">
+    <img src="artworks-web/error-message-21.jpg" alt="">
+    <img src="artworks-web/there-was-a-center-once.jpg" alt="">
+    <img src="artworks-web/you-werent-meant-to-understand.jpg" alt="">
+  </div>
+
+  <div class="hero-scroll-cue" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'})">
+    <span>The Works</span>
+    <svg width="14" height="20" viewBox="0 0 14 20" fill="none">
+      <line x1="7" y1="0" x2="7" y2="15" stroke="#666" stroke-width="1"/>
+      <polyline points="2,11 7,17 12,11" stroke="#666" stroke-width="1" fill="none"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ── GALLERY ── -->
+<section class="gallery" id="gallery">
+
+  <div class="artwork-panel" id="artwork-panel">
+    <div class="artwork-empty" id="artwork-empty">
+      <div class="artwork-empty-line"></div>
+      <p>Select a work</p>
+      <div class="artwork-empty-line"></div>
+    </div>
+    <div class="artwork-inner" id="artwork-inner">
+      <div class="artwork-image-wrap">
+        <img class="artwork-img" id="artwork-img" src="" alt="">
+      </div>
+      <div class="artwork-info">
+        <p class="artwork-series">Fracture · 2024</p>
+        <h2 class="artwork-title" id="artwork-title"></h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="work-list" id="work-list"></div>
+
+</section>
+
+<script>
+const WORKS = [
+  { id: 'error-message-21',            title: 'Error Message #21' },
+  { id: 'everything-meant-something',  title: 'Everything Meant Something' },
+  { id: 'i-tried-to-be-seen',          title: 'I Tried to Be Seen' },
+  { id: 'make-me-whole-again',         title: 'Make Me Whole Again' },
+  { id: 'not-ready-to-upload',         title: 'Not Ready to Upload' },
+  { id: 'proof-of-presence',           title: 'Proof of Presence' },
+  { id: 'something-broke',             title: 'Something Broke Before It Reached You' },
+  { id: 'there-was-a-center-once',     title: 'There Was a Center Once' },
+  { id: 'there-was-a-line',            title: 'There Was a Line Between Us' },
+  { id: 'this-box-is-not-me',          title: 'This Box Is Not Me' },
+  { id: 'this-is-not-what-i-meant',    title: 'This Is Not What I Meant' },
+  { id: 'trying-to-make-contact',      title: 'Trying to Make Contact' },
+  { id: 'unread-unheard-unfolding',    title: 'Unread, Unheard, Unfolding' },
+  { id: 'you-almost-heard-me',         title: 'You Almost Heard Me' },
+  { id: 'you-werent-meant-to-understand', title: "You Weren't Meant to Understand" },
+];
+
+let activeId = null;
+
+function selectWork(id) {
+  if (activeId === id) return;
+  activeId = id;
+  const w = WORKS.find(x => x.id === id);
+
+  document.getElementById('artwork-empty').style.opacity = '0';
+  document.getElementById('artwork-empty').style.pointerEvents = 'none';
+  const inner = document.getElementById('artwork-inner');
+  inner.style.display = 'flex';
+  document.getElementById('artwork-img').src = `artworks-web/${id}.jpg`;
+  document.getElementById('artwork-title').textContent = w.title;
+
+  document.querySelectorAll('.work-entry').forEach(el => {
+    el.classList.toggle('active', el.dataset.id === id);
+  });
+}
+
+const list = document.getElementById('work-list');
+WORKS.forEach((w, i) => {
+  const entry = document.createElement('div');
+  entry.className = 'work-entry';
+  entry.dataset.id = w.id;
+  const num = String(i + 1).padStart(2, '0');
+  const total = String(WORKS.length).padStart(2, '0');
+  entry.innerHTML = `
+    <div class="work-thumb-wrap">
+      <img class="work-thumb" src="artworks-web/${w.id}.jpg" alt="${w.title}" loading="lazy">
+    </div>
+    <div class="work-entry-body">
+      <p class="work-entry-num">${num} &nbsp;/&nbsp; ${total}</p>
+      <h3 class="work-entry-title">${w.title}</h3>
+      <p class="work-entry-tag">Fracture · Generative &amp; AI · 2024</p>
+    </div>
+  `;
+  entry.addEventListener('click', () => selectWork(w.id));
+  list.appendChild(entry);
+});
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !activeId) selectWork(WORKS[0].id);
+  });
+}, { threshold: 0.3 });
+observer.observe(document.getElementById('gallery'));
+</script>
+
+</body>
+</html>
