@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What Remains — JCode</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080808;
+      --text: #c8c8c8;
+      --text-dim: #5a5a5a;
+      --text-bright: #ebebeb;
+      --gold: #b89a56;
+      --gold-dim: rgba(184,154,86,0.2);
+      --line: #1c1c1c;
+      --panel-bg: #0d0d0d;
+    }
+
+    html {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      height: 100%;
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      scroll-behavior: smooth;
+    }
+
+    /* ── SECTION 1: INTRO ─────────────────────────────── */
+    .intro {
+      height: 100vh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .intro::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+    }
+
+    /* vertical divider between columns */
+    .intro-left::after {
+      content: '';
+      position: absolute;
+      top: 10vh;
+      bottom: 10vh;
+      right: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--line) 20%, var(--line) 80%, transparent);
+    }
+
+    /* LEFT column: title */
+    .intro-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 7vw 60px 8vw;
+      position: relative;
+    }
+
+    .intro-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 36px;
+      font-weight: 500;
+    }
+
+    .intro-title {
+      font-family: 'Lora', serif;
+      font-size: clamp(56px, 5.5vw, 82px);
+      font-weight: 400;
+      color: var(--text-bright);
+      letter-spacing: -0.02em;
+      line-height: 1.0;
+      margin-bottom: 0;
+    }
+
+    .intro-title-sub {
+      font-family: 'Lora', serif;
+      font-size: clamp(56px, 5.5vw, 82px);
+      font-weight: 400;
+      color: var(--text-bright);
+      letter-spacing: -0.02em;
+      line-height: 1.0;
+      margin-bottom: 40px;
+    }
+
+    .intro-byline {
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-top: 8px;
+    }
+
+    /* RIGHT column: description + statement */
+    .intro-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 8vw 60px 7vw;
+      gap: 0;
+    }
+
+    .intro-divider {
+      width: 28px;
+      height: 1px;
+      background: var(--gold);
+      margin-bottom: 28px;
+    }
+
+    .intro-description {
+      font-family: 'Lora', serif;
+      font-size: clamp(14px, 1.1vw, 17px);
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: 28px;
+    }
+
+    .intro-statement {
+      font-family: 'Lora', serif;
+      font-size: clamp(12px, 0.95vw, 14px);
+      line-height: 1.85;
+      color: var(--text-dim);
+      font-style: italic;
+      margin-bottom: 0;
+    }
+
+    .scroll-cue {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      animation: pulse 2.5s ease-in-out infinite;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .scroll-cue span {
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .scroll-cue svg {
+      opacity: 0.4;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; transform: translateX(-50%) translateY(0); }
+      50% { opacity: 0.8; transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* ── SECTIONS 2 & 3: INTERIOR PAGES ─────────────────── */
+    .interior {
+      height: 100vh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .interior::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+    }
+
+    .interior-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 7vw 60px 8vw;
+      position: relative;
+      border-right: 1px solid var(--line);
+    }
+
+    /* fade the border top and bottom */
+    .interior-left::before {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0; right: -1px;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--line) 15%, var(--line) 85%, transparent);
+    }
+
+    .interior-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 8vw 60px 7vw;
+      overflow-y: auto;
+    }
+
+    .section-num {
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 20px;
+      font-weight: 400;
+    }
+
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 36px;
+      font-weight: 500;
+    }
+
+    .section-pullquote {
+      font-family: 'Lora', serif;
+      font-size: clamp(20px, 2vw, 28px);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--text-bright);
+      line-height: 1.45;
+      margin-bottom: 40px;
+    }
+
+    .section-caption {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-top: auto;
+    }
+
+    .section-body {
+      font-family: 'Lora', serif;
+      font-size: clamp(13px, 1vw, 15px);
+      line-height: 1.9;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+
+    .section-body:last-child { margin-bottom: 0; }
+
+    .section-divider {
+      width: 28px;
+      height: 1px;
+      background: var(--gold);
+      margin-bottom: 28px;
+    }
+
+    /* ── SECTION 4: GALLERY ───────────────────────────── */
+    .gallery {
+      scroll-snap-align: start;
+      min-height: 100vh;
+      display: flex;
+      position: relative;
+    }
+
+    /* LEFT: Detail panel */
+    .detail-panel {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 50%;
+      border-right: 1px solid var(--line);
+      background: var(--panel-bg);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .detail-inner {
+      padding: 60px 56px;
+    }
+
+    .detail-empty {
+      text-align: center;
+      padding: 60px 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 16px;
+    }
+
+    .detail-empty-line {
+      width: 1px;
+      height: 60px;
+      background: var(--gold-dim);
+      margin: 0 auto;
+    }
+
+    .detail-empty p {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .detail-image {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      display: block;
+      margin-bottom: 32px;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .detail-image.loaded {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .detail-day-label {
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .detail-title {
+      font-family: 'Lora', serif;
+      font-size: clamp(22px, 2.5vw, 30px);
+      font-weight: 400;
+      color: var(--text-bright);
+      margin-bottom: 24px;
+      line-height: 1.2;
+    }
+
+    .detail-rule {
+      width: 28px;
+      height: 1px;
+      background: var(--gold);
+      margin-bottom: 24px;
+    }
+
+    .detail-curatorial {
+      font-family: 'Lora', serif;
+      font-size: 14px;
+      line-height: 1.9;
+      color: var(--text);
+    }
+
+    /* RIGHT: Timeline */
+    .timeline-wrap {
+      flex: 1;
+      padding: 80px 0 120px 0;
+      position: relative;
+    }
+
+    .timeline-header {
+      padding: 0 0 60px 140px;
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* The vertical line */
+    .timeline-line-track {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 110px;
+      width: 1px;
+      background: var(--line);
+    }
+
+    .day-entry {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      padding: 0 40px 64px 140px;
+      cursor: pointer;
+    }
+
+    /* Dot on the line */
+    .day-entry::before {
+      content: '';
+      position: absolute;
+      left: 106px;
+      top: 10px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--line);
+      border: 1px solid #333;
+      transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+      z-index: 2;
+    }
+
+    .day-entry:hover::before,
+    .day-entry.active::before {
+      background: var(--gold);
+      border-color: var(--gold);
+      box-shadow: 0 0 12px rgba(184,154,86,0.4);
+    }
+
+    .day-num {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--text-dim);
+      min-width: 0;
+      margin-top: 8px;
+      margin-right: 24px;
+      text-align: right;
+      width: 0;
+      overflow: visible;
+      position: absolute;
+      left: 0;
+      white-space: nowrap;
+    }
+
+    .artwork-thumb-wrap {
+      width: 100%;
+      max-width: 380px;
+    }
+
+    .artwork-label {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .day-entry:hover .artwork-label,
+    .day-entry.active .artwork-label {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .artwork-thumb {
+      width: 100%;
+      display: block;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      filter: grayscale(100%) brightness(0.35);
+      transition: filter 0.6s ease, box-shadow 0.6s ease;
+    }
+
+    .day-entry:hover .artwork-thumb {
+      filter: grayscale(0%) brightness(0.9);
+    }
+
+    .day-entry.active .artwork-thumb {
+      filter: grayscale(0%) brightness(1);
+      box-shadow: 0 0 0 1px var(--gold);
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .intro, .interior { grid-template-columns: 1fr; }
+      .intro-left::after, .interior-left { border-right: none; }
+      .intro-left { padding-bottom: 20px; }
+      .intro-right { padding-top: 0; }
+      .intro-title, .intro-title-sub { font-size: 48px; }
+      .gallery { flex-direction: column; }
+      .detail-panel {
+        position: relative;
+        width: 100%;
+        height: auto;
+        min-height: 60vh;
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── SECTION 1: INTRO ─────────────────────── -->
+<section class="intro" id="intro">
+
+  <!-- Left column: title -->
+  <div class="intro-left">
+    <p class="section-num" style="margin-bottom:16px;">01 &nbsp;/&nbsp; 04</p>
+    <p class="intro-eyebrow">45 Days &nbsp;·&nbsp; Generative Painting Series &nbsp;·&nbsp; 2026</p>
+    <h1 class="intro-title">What</h1>
+    <h1 class="intro-title-sub">Remains</h1>
+    <p class="intro-byline">JCode &nbsp;·&nbsp; 2026</p>
+  </div>
+
+  <!-- Right column: description + statement -->
+  <div class="intro-right">
+    <div class="intro-divider"></div>
+    <p class="intro-description">
+      I started this series on the first night of the strikes. I knew this was going to be an inflection point in the global order with long lasting implications regardless of the outcome. I sat down and started coding an abstraction algorithm in p5js. I felt these events were something that photography alone wasn't going to capture and felt the urge to find a different way for the viewer to witness it.
+    </p>
+    <p class="intro-statement">
+      War photography saturates. You see the rubble, you recognise the formula, you scroll past. The human capacity to absorb atrocity through repeated exposure is not a feature; it is a defence mechanism, and a defence mechanism is a kind of numbness. I wanted a way to document these events that arrived at the viewer before their trained responses could intercept it.
+      <br><br>
+      The series was made day by day, in the order events happened. The sequence is the argument. What remains is the record.
+    </p>
+  </div>
+
+  <div class="scroll-cue" onclick="document.getElementById('the-why').scrollIntoView({behavior:'smooth'})">
+    <span>Enter</span>
+    <svg width="16" height="24" viewBox="0 0 16 24" fill="none">
+      <line x1="8" y1="0" x2="8" y2="18" stroke="#b89a56" stroke-width="1"/>
+      <polyline points="3,13 8,20 13,13" stroke="#b89a56" stroke-width="1" fill="none"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ── SECTION 2: THE WHY ─────────────────────── -->
+<section class="interior" id="the-why">
+
+  <div class="interior-left">
+    <p class="section-num">02 &nbsp;/&nbsp; 04</p>
+    <p class="section-label">The Work</p>
+    <p class="section-pullquote">
+      "It does not know whose rubble it is reading. It cannot choose sides. Its neutrality is not a limitation. It is the point."
+    </p>
+    <p class="section-caption">What Remains &nbsp;·&nbsp; 2026</p>
+  </div>
+
+  <div class="interior-right">
+    <div class="section-divider"></div>
+    <p class="section-body">
+      The title <em>What Remains</em> operates in three registers simultaneously. The first is formal: what the algorithm retains from each source photograph, stripped of its documentary context — the weight, the heat, the dispersal, the silence. The second is human: what remains of the lives, structures, and cities in these images after the camera has moved on and the news cycle has closed. The third is political: what remains of the international order that the United States spent the second half of the twentieth century constructing.
+    </p>
+    <p class="section-body">
+      I believe this conflict will be read by history as a watershed — not primarily as a military event, but as the moment when the decline of American imperial power became visible and irreversible. What follows is not a return to stability. The Middle East that comes out of this conflict is one in which the regional architecture has been permanently altered: likely a more influential Iran, a more isolated United States, and a set of regional states that will necessarily build closer relationships with Tehran. The centre of gravity that was always moving east has now moved faster, and more definitively, toward China.
+    </p>
+    <p class="section-body">
+      This is the historical moment the series is documenting. Not just the war, but what the war reveals about the order that preceded it and the order that will follow. I am not a war correspondent. I am someone who watches things happen and tries to find a form to share what I am watching.
+    </p>
+  </div>
+
+  <div class="scroll-cue" onclick="document.getElementById('the-how').scrollIntoView({behavior:'smooth'})">
+    <span>Continue</span>
+    <svg width="16" height="24" viewBox="0 0 16 24" fill="none">
+      <line x1="8" y1="0" x2="8" y2="18" stroke="#b89a56" stroke-width="1"/>
+      <polyline points="3,13 8,20 13,13" stroke="#b89a56" stroke-width="1" fill="none"/>
+    </svg>
+  </div>
+
+</section>
+
+<!-- ── SECTION 3: THE HOW ─────────────────────── -->
+<section class="interior" id="the-how">
+
+  <div class="interior-left">
+    <p class="section-num">03 &nbsp;/&nbsp; 04</p>
+    <p class="section-label">The Process</p>
+    <p class="section-pullquote">
+      "What it produces is not interpretation. It is extraction. What the photograph contained. What remained."
+    </p>
+    <p class="section-body" style="color: var(--text-dim); font-size: 13px; margin-top: 28px; margin-bottom: 0;">
+      JCode is a generative artist working at the intersection of code, paint, and political document. His practice explores how algorithmic systems translate lived experience into formal abstraction — and what is preserved, and what is lost, in that translation.
+    </p>
+  </div>
+
+  <div class="interior-right">
+    <div class="section-divider"></div>
+    <p class="section-body">
+      The algorithm does something very specific: it reads a photograph for colour, structure, energy, and edge data — and produces an abstract composition from what it finds. It has no cultural memory of war. It doesn't know what a bomb crater means; it knows what a bomb crater looks like, formally.
+    </p>
+    <p class="section-body">
+      Each work is built in two layers. First a p5.js algorithm that extracts structure, colour and composition. Second, a custom LORA model trained on the artist's established mark-making vocabulary, gestural instincts, where marks land and how they relate. A photograph enters. The system reads it as pure formal data: colour temperature, compositional mass, directional energy. What emerges is not an illustration. It is a translation.
+    </p>
+    <p class="section-body">
+      The abstract paintings in this series will outlast the news cycle, because abstraction ages differently than photography. A photograph of rubble dates. A painting of mass and colour and energy does not. Thirty years from now, these works will still carry what the algorithm found in each image — even if no one alive remembers what the image was.
+    </p>
+  </div>
+
+  <div class="scroll-cue" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'})">
+    <span>The Works</span>
+    <svg width="16" height="24" viewBox="0 0 16 24" fill="none">
+      <line x1="8" y1="0" x2="8" y2="18" stroke="#b89a56" stroke-width="1"/>
+      <polyline points="3,13 8,20 13,13" stroke="#b89a56" stroke-width="1" fill="none"/>
+    </svg>
+  </div>
+
+</section>
+
+<!-- ── SECTION 4: GALLERY ────────────────────── -->
+<section class="gallery" id="gallery">
+
+  <!-- LEFT: sticky detail panel -->
+  <div class="detail-panel" id="detail-panel">
+    <div class="detail-empty" id="detail-empty">
+      <div class="detail-empty-line"></div>
+      <p>Select a work</p>
+      <div class="detail-empty-line"></div>
+    </div>
+    <div class="detail-inner" id="detail-content" style="display:none">
+      <img id="detail-img" class="detail-image" src="" alt="">
+      <p class="detail-day-label" id="detail-day"></p>
+      <h2 class="detail-title" id="detail-title"></h2>
+      <div class="detail-rule"></div>
+      <p class="detail-curatorial" id="detail-curatorial"></p>
+    </div>
+  </div>
+
+  <!-- RIGHT: timeline -->
+  <div class="timeline-wrap">
+    <div class="timeline-line-track"></div>
+    <div class="timeline-header">43 works &nbsp;·&nbsp; Scroll to explore</div>
+    <div id="timeline-entries"></div>
+  </div>
+
+</section>
+
+<script>
+const DAYS = [
+  { day: 1, title: 'First Night', curatorial: 'This work takes as its source a photograph from the first night of the strikes — a residential street in Tehran submerged in concrete rubble, an Iranian fire engine pushing through the wreckage, emergency workers at dusk. The algorithm reads the scene\'s masses and energy: the heavy debris forms at left and center-right, the red emergency light cutting through the field. What it returns are two large, body-scaled forms drifting across a pale ground, connected by a red gestural sweep that has no technical relationship to an emergency vehicle but carries the same urgent, irreducible quality. The black contour lines trace what remains when the documentation is removed. This is the painting that arrived before the news cycle had decided what the first night meant.' },
+  { day: 2, title: 'Quartz', curatorial: 'The source photograph presents a particular geometry: a luxury superyacht sailing calmly in the foreground while a massive column of black smoke rises from a burning refinery on the far shore. The algorithm reads the formal weight of each element and returns two large architectural masses edged in orange, floating in a white field. The orange is not fire — it is the residue of fire after processing. The white between the forms is the distance that wealth places between itself and consequence. The small red and blue marks at the lower left are the only remnants at human scale: everything else has been resolved into structure and interval.' },
+  { day: 3, title: 'Nearly Transparent', curatorial: 'The source is a photograph of ordinary life interrupted at a distance: an Israeli highway with traffic still moving beneath an overpass, a palm tree in frame — and on the horizon, a column of smoke rising from something just struck. The algorithm finds almost nothing to hold; the ordinary has no extractable weight. What it returns is nearly transparent: a single event-mark suspended in a vast white field, fine radiating lines crossing the full canvas like the first visible evidence of something underground. Two traversing lines carry the structure of the image — the road, the overpass — without any of its content. The painting looks like it was barely struck, and has not yet decided what to do with that.' },
+  { day: 4, title: 'Morning', curatorial: 'On the morning this work documents, strikes continued against multiple targets simultaneously — the conflict spreading across the field rather than concentrated in a single point. The algorithm processes an image of dispersal and returns warm sandy clouds drifting across white space: large, soft-edged, the way news of multiple events occupies the mind at once. The darker mechanical forms at center and lower right are the most specific things in the composition — the hardware, the equipment — rendered as the densest marks in a field of warmth. A pink-red line cuts horizontally through everything. The algorithm does not know what the line records. It knows only that the line was there, and that it crossed everything else.' },
+  { day: 5, title: 'Warmth', curatorial: 'This work is made from a photograph of total destruction: a vehicle swallowed entirely by rubble, a building reduced to concrete fragments and exposed rebar. The algorithm reads the palette of pulverized architecture — the warm rose and buff tones of concrete dust, displaced earth, exposed brick — and returns a mauve field so warm it almost reads as comfort. Two oval marks rest within it, not craters but presences: circles the algorithm found in the rubble and preserved as form. The gestural marks in the upper zone hover at the edge of becoming figures. The series\' formal argument arrives early here: the color of destruction, rendered with tenderness, is the most disorienting translation the algorithm has yet produced.' },
+  { day: 6, title: 'Dispersal', curatorial: 'The source is a photograph of displacement: two people riding in the open back of a truck with all their remaining belongings heaped around them, wrapped against the cold or the exposure of being in motion. The algorithm reads the frame: the rectangle of the truck bed, the figures within it, the surrounding field. It returns a formal rhyme — a large rectangular enclosure at center, set within a sandy ground, with interior marks that preserve the quality of figures held inside a moving boundary. The blue vertical mark at right is the painting\'s single departure: a way through the enclosure, rendered as color. The algorithm made a painting about containment without knowing it was watching people leave everything behind.' },
+  { day: 7, title: 'Layered', curatorial: 'This photograph offers what the news rarely allows: the city as a whole, still standing. The smoke rises not from it but behind it — from the mountains beyond, from something far enough away to let the buildings in the foreground stay intact. The algorithm reads the layered horizontality — the building mass, the city spread, the smoke cloud — and distills it into a large white disk floating in a pink and grey field. Not the city, not the smoke, but something between them: the space that makes survival visible. The small tower form at right is precise and isolated, as if the whole panorama has been reduced to a single standing structure. The painting holds what the photograph held: the distance between where you are and where the damage is.' },
+  { day: 8, title: 'Energy', curatorial: 'A second panoramic city view: different geography, wider spread, the mountains further back. The strike is visible only as a trace on the horizon, and the city occupies most of the frame still whole. The algorithm reads scale and the pale palette of urban architecture — stone, concrete, the light color of mass — and returns two large pale forms like building facades seen side-on, rendered in the warmest possible register. A ghost skyline appears at lower center: barely drawn, as if the painting is uncertain whether to commit to the city being there. The small marks at the base look recently arrived. The algorithm read the height of the buildings and the pale surface of the city and returned warmth where the source image held uncertainty.' },
+  { day: 9, title: 'Field', curatorial: 'The photograph is almost entirely smoke — a massive column of dense black rising from a burning vehicle or fuel depot in an open, flat landscape, the ground visible only at the image\'s base. The algorithm reads the vertical event against the horizontal surface: the column against the flat terrain. It returns two pale diagonal structures descending from the upper field into warm tan ground — not the smoke itself but the formal grammar of a large vertical event on a horizontal surface, translated into something closer to construction than combustion. The blue marks are precise and cool: data inside heat. The dark band at lower left is where the ground should be, held at the painting\'s edge. The fire has become two pale diagonals. The field has become warmth.' },
+  { day: 10, title: 'Conversation', curatorial: 'The source photograph is composed around a particular posture: two Iranian Red Crescent workers standing with their backs to the camera, watching a billowing column of black smoke from a burning site below. They are watching something they cannot stop. The algorithm reads their orientation toward the smoke and returns a field almost entirely red — not the red of their vests but a deeper, atmospheric red that seems to come from inside the image rather than its surface. Two rectangular forms float in the field: one golden-orange, one dark, occupying space the way smoke occupies sky — not placed but risen. The white marks at lower left are the only relief. This is the first painting in the series with no room for anything that is not the fact of what is burning.' },
+  { day: 11, title: 'No Edge', curatorial: 'This work marks the beginning of the documented three-step workflow: photograph, algorithm, prompt, painting. The source is an image of a crowd — dense, collective, bodies pressed together until the individual mark dissolves into pattern. The algorithm reads the crowd as surface and returns a dense herringbone weave of warm amber-gold, brick red, slate lavender, and cream repeating across the full canvas with no center and no edge. Ghost rectangle structures hover beneath the surface tension, barely visible: the architecture of the space the crowd is filling, remembered through the bodies that have filled it. A small red circle and a single black circle are nearly invisible within the density — punctuation in a sentence with no end. Crowd as pure pattern; the individual dissolved entirely into collective force.' },
+  { day: 12, title: 'What She Carried', curatorial: 'The source is an image of a woman moving through or within heavy destruction — dark masses pressing from every edge toward a single isolated presence. The algorithm reads the weight as visual weight: interlocking fields of near-black charcoal, heavily textured with diagonal hatching suggesting collapsed architectural mass. Only the faintest light filters through — cool ice blue-gray and dusty mauve between the dark forms, like light through broken structure. A single small trapezoid at center is precise, fragile, alone in the surrounding dark. This is the painting\'s central proposition: one isolated form, one carried thing, held within encroaching ruin. The title names what the algorithm could not — what she carried, and the impossible weight of carrying it through this.' },
+  { day: 13, title: 'Architecture and Event', curatorial: 'The source photograph is compositionally divided: on the left, the precise geometry of targeted infrastructure — columns, scaffolding, the structure of what was struck; on the right, the atmospheric event of the strike itself, the billowing red-grey cloud of explosion. The algorithm reads this division and returns it as formal structure: a zone of stacked cylindrical forms in icy silver-blue at left, architectural and precise; a large sweeping deep red atmospheric mass at right with no edge. Cool silver-white vertical streaks fall through both zones like arrested motion. A small dark rectangle at center belongs to both sides simultaneously: the architectural anchor inside the atmospheric event. The painting holds the gap between precision and dissolution — between what was aimed at and what the aim produced.' },
+  { day: 14, title: 'The Refinery from Space', curatorial: 'The source is an overhead image — surveillance or satellite view of an oil refinery or industrial complex, the kind of image that precedes or follows a strike rather than documenting it directly. Seen from altitude, the infrastructure becomes pure geometry: rectangular units in a grid, human scale entirely removed. The algorithm reads this overhead view and returns a loose orthogonal grid of dusty lavender and muted mauve rectangles, covering the canvas in a woven lattice — industrial geometry rendered in the palette of domestic textiles. A large black circle at center-left is the painting\'s void: the aperture through which altitude looks down. The algorithm cannot distinguish between an oil refinery seen from space and a quilt seen from above. Both are pattern. Both are structure. One was a target.' },
+  { day: 15, title: 'What the Hands Found', curatorial: 'The source documents the work of rescue: figures moving through dense debris, hands working in the dark, the physical labor of searching for survivors. The algorithm reads diagonal compressive force and its undoing simultaneously — the weight of collapsed structure and the force moving against it. Dark masses fracture and shift across the canvas in an urgent downward sweep, as though the painting has caught the debris in the act of being moved. A dusty rose and blush ground shows between the dark passages — the earth that the hands are working toward. A luminous white aperture opens at center: excavated light, found space after something heavy has been lifted. A single precise trapezoid is suspended in that gap. The painting holds the space between two possible meanings of what the hands found.' },
+  { day: 16, title: 'No War with Iran', curatorial: 'The source is a protest: people gathered in public space, holding signs and banners aloft at varying heights, the horizontal field of collective declaration. The algorithm reads the shapes of signs held overhead and returns broad, interlocking diagonal banner-like forms in blush rose and pale flesh — the gesture of speech preserved as pure shape, the words removed. The lower zone dissolves into luminous pink-white open space: the civic ground beneath the crowd, the space the crowd is filling with its collective voice. Smaller fragmentary forms scatter at the right and bottom edges — the periphery of the demonstration, the people slightly outside the density. This is the formal argument of a protest from which every slogan has been extracted. What remains is the shape of the act of saying no.' },
+  { day: 17, title: 'Someone\'s Floor', curatorial: 'The source image shows the interior of someone\'s home after a strike — the floor plan still legible but the room compressed into debris, a carpet pattern or domestic textile surviving in the wreckage as the last legible color. The algorithm reads the interior space and produces a labyrinthine field of deep forest green and near-black striping — the carpet\'s pattern extracted and scaled up, covering the whole canvas as if the domestic object has expanded to become the space itself. Ghost rectangle outlines are embedded within the mass: dissolved room structure, window frames, the geometry of what the interior used to be. Daylight enters at the left and lower edges — sage-green atmospheric wash — breaking through the dense field the way light enters through a broken wall. The hexagon form at center is a found domestic object: precise, surviving, holding its shape inside total compression.' },
+  { day: 18, title: 'Face to Face', curatorial: 'The source is a portrait of human proximity — two people facing each other, or a face illuminated within surrounding darkness, the kind of image that resists the language of military operations. The algorithm reads warmth and closeness and produces a composition entirely in umber, raw sienna, and warm caramel — no cool tones, no industrial palette, none of the metallics or charcoals that dominate the series. Two large dark masses anchor the upper corners, pressing inward toward a luminous white vertical passage: the light held between two people who are close. Branching dark forms at lower center reach outward like the structure of an embrace, or hands opening. A white circle is the illuminated face. This painting was made from an image of loss — and the algorithm\'s most clarifying argument is this: it cannot tell the difference between grief and love when both are rendered in the same light.' },
+  { day: 19, title: 'Fireball', curatorial: 'The source is an image of an explosion at its peak: a fireball, the orange-red event at maximum intensity, the kind of image that photography freezes but cannot hold. The algorithm reads extreme heat and extreme color and produces a composition of maximum contrast: a dense, heavily cross-hatched dark lattice at center — near-black with deep navy, compressed to maximum density — surrounded and underlaid by raw saturated orange and vermillion. The dark mass at center is the compressed structure inside the fire: the nucleus of the event, the matter that has not yet become light. The orange bleeds from lower left across the entire base and dissolves into white at the right edge. A small trapezoid at center is the eye of the event. The painting holds the formal argument of combustion: the densest possible structure inside the most released possible energy.' },
+  { day: 20, title: 'Something to Hold', curatorial: 'The source image documents the aftermath of a life scattered: personal belongings distributed across the ground, the pattern of a domestic life broken into fragments and laid out across the field. The algorithm reads dispersal and returns a branching white network of sandy-taupe passages threading across the full canvas — the map of what was scattered, preserved as structure. Terracotta and brick-red rectangular spots are distributed throughout the field, evenly spaced, the way fragments of a child\'s clothing or broken brick end up after impact: scattered but persistent. Three prominent gestural circle marks sit at varying scales across the composition — large, medium, small — each like an eye returning a gaze. The title names what the painting makes formal: amid the dispersal, something to hold onto. The circles are witnesses.' },
+  { day: 21, title: 'Bread Rings on a Flag', curatorial: 'The source brings the series into contact with the ordinary: bread rings on or near an Iranian flag, the daily ritual of sustenance inside the colors of nationhood. The algorithm reads the flag\'s horizontal banding and returns strong red and steel-blue fields separated across the full canvas — the formal language of a flag laid flat, a nation\'s colors resolved into their essential geometry. A complex branching red structure at center abstracts the national symbol into pure gesture — the emblem dissolved into mark-making. Small red cylindrical forms scatter across the composition: the bread rings, preserved as repeated marks, the daily life that continues inside the flag\'s colors. The ordinary has been made political simply by proximity. Survival as national act.' },
+  { day: 22, title: 'The Ordnance', curatorial: 'The source is an image of weapons — ordnance stockpiled, loaded, or prepared for deployment: the objects that precede the events the rest of the series documents. The algorithm reads the repeating cylindrical forms and returns them directly as composition: vertical columns of silver-white shapes with dark rounded caps arranged in systematic rows across the full canvas, inventory made visible. The palette is stripped of everything human — no warmth, no grief, no color except silver-white, near-black charcoal, warm sand, cool gray. Systematic repetition is the only formal language. The object is preserved as its own portrait, while everything the object produces has been absorbed into the other paintings. Day 22 is the only work in the series that looks at what makes the other works necessary.' },
+  { day: 23, title: 'We Are Still Here', curatorial: 'The source is an image of people inside ruin — figures visible through or within the exposed structural skeleton of a destroyed building, rebar and concrete forming the frame around them. The algorithm reads the coral-salmon network of exposed structure and produces a dense interlocking field of red-orange forms with fibrous texture, covering the canvas like an architectural skeleton that has become its own kind of living structure. Cool slate blue-gray weaves between and behind the red network: the sky seen through ruins, the air still available. Two white circles are paired close together at lower center-right, flanked by a black circle — three marks that hold the quality of human presence inside what remains. The title is the declaration the algorithm cannot make. The three circles make it anyway.' },
+  { day: 24, title: 'Small Fire at a Large Fence', curatorial: 'The source is an image at a border: a large fence dividing the frame, a small fire burning on one side of it, and against the fire\'s light, the suggestion of a person sheltering. The algorithm reads the extreme darkness and the single light source and returns almost nothing else: a near-total monochromatic field of charcoal and near-black, divided by a strong horizontal bar of repeating segmented forms across the upper third — the fence rendered as a band of marks. Below the fence, vast darkness. At lower center, a single luminous white rectangle: the only warmth source in the entire composition. A dark huddled form sits within the white rectangle. The rest of the canvas is graphite debris in darkness. The painting is one of the most reduced in the series — the fence as the painting\'s architecture, survival as a single lit form against everything else.' },
+  { day: 25, title: 'The Persia', curatorial: 'The source documents demolition: a building reduced, its structure dissolving back into the pale light around it. The algorithm reads the near-transparency — the building\'s mass barely distinguishable from the sky behind it — and returns an almost entirely luminous field: pale sage-celadon and pearl white covering the full canvas, dispersed diagonal marks barely holding together as form. This is the inverse of Day 24 — where that painting held maximum darkness, this one holds maximum light. Dark forest-green accents at the corners are the only concentrations of tone: the last weight before dissolution. A single black circle at center-left is the painting\'s aperture — the void that remains when the building has gone. The title names the civilization the algorithm cannot see: what is being unmade has a history that predates this conflict by millennia.' },
+  { day: 26, title: 'The Hole in the Street', curatorial: 'The source is a bomb crater in the middle of a street — the impact point visible, the surrounding road and rubble photographed close enough to show the scale of the void. This is also the painting made from an image on the other side of the conflict: rubble in a different city, made by different hands. The algorithm produced the same painting. Dense silver-gray and dusty mauve-rose forms sweep diagonally across the canvas, the palette of concrete dust absorbing all warmth. A luminous white void opens at lower-left: the hole in the earth rendered as a hole in the composition, surrounded by encroaching dark forms. The algorithm cannot choose whose rubble it is reading. It read the crater and produced the same void. Its neutrality is not a limitation. It is the point.' },
+  { day: 27, title: 'She Takes His Hand', curatorial: 'The source shows two people in motion: a woman and a child, or two figures of different heights, moving together through or away from destroyed surroundings. The algorithm reads their shared direction and returns a full-canvas diagonal sweep in warm dusty rose and blush mauve — forms moving left to right with strong forward momentum, unlike any previous composition in the series. The dark charcoal passages at the left edge are where they have been: rubble, darkness, what they are leaving. The lighter pearl passages at right are where they are going: open space, the direction of survival. At center, three circles in vertical arrangement — one larger dark, one medium, one white — mark two presences of different sizes moving together. The diagonal is the direction of escape. The painting holds the quality of motion without depicting it.' },
+  { day: 28, title: 'The Moment of Release', curatorial: 'The source captures the moment of firing: a weapon at the instant of discharge, the bilateral force of launch caught in a single frame. The algorithm reads the near-symmetrical expansion of the event — the shock wave, the displaced air — and returns a composition of horizontal velocity consuming the full canvas. Wide sandy-khaki and white streaks expand outward from center as shock wave and displaced air. Two large burnt orange-terracotta fields at center-left and center-right are the replicated muzzle flash — the moment of release, doubled. Dark charcoal forms with orange cores scatter throughout as hardware and shell casings. A small trapezoid at center is the fixed point everything moves away from. The series\' most mechanically precise work: the machinery of sending rendered as near-symmetry, bilateral force as abstract form.' },
+  { day: 29, title: 'Raised', curatorial: 'The source is an image of collective anger: a crowd with weapons raised, or raised fists — the mass gesture of a people at war. The algorithm reads the directional diagonal force of raised arms and returns dark navy and slate-blue forms slashing across the canvas with angular urgency — raised weapons rendered as near-calligraphic marks, as if the act of raising has produced a form of writing. A brilliant orange atmospheric sweep at upper right is the flag or the sky above the crowd; vivid red at the corners is declaration. Ice blue weaves between the dark forms as counterpoint — the space between raised arms, the air between the anger. The forms here are pointed and kinetic in a way unlike the rounded organic forms of most of the series. Collective anger as diagonal text.' },
+  { day: 30, title: 'The Man in the Navy Suit', curatorial: 'The source documents authority: a figure in a dark suit at a podium, the formal staging of political power. A large vertical amber form occupies the left-center of the canvas: dense, flat-faced, the formal weight of a standing figure resolved into warm mass. Deep navy presses from above with diagonal momentum, sweeping into crimson horizontal strokes at right — the force that surrounds the figure, the weight of what has been ordered. White lines radiate from center-right: fast, directional, cutting through everything. A small diamond shape near the mid-field is precise and isolated. Circle marks cluster at the base of the warm form. The series did not end here. The figure in the amber form is not the last image. The man in the navy suit is not the last painting.' },
+  { day: 31, title: 'The Bazaar', curatorial: 'The source is a photograph from the Old City of Jerusalem: the market district empty and shuttered, hand-painted shop signs visible — &quot;Native Bazaar&quot;, &quot;Old City Bazaar&quot; — and at the base of the closed doors, a single figure hunched against the wall. The algorithm reads the repeating rectangular forms of the shuttered storefronts and returns them scaled up and loosened: vivid orange rectangles floating across the canvas, some rotated, some stacked — the geometry of closed commercial space rendered as pure form. Orange drips descend through the center of the composition, the weight of the color falling. A small dark form at lower left preserves the scale of the seated figure, isolated below the geometry of everything that has closed around it. The brick-red rectangle at lower right holds its color apart from the orange: a different closure, a different weight.' },
+  { day: 32, title: 'Into the Burning', curatorial: 'The source is a photograph from the other direction in the conflict: Israeli firefighters inside a building struck by an Iranian missile, battling fire visible through the damaged walls behind them. The algorithm reads the urgent energy of light inside darkness — the white-hot source of the fire, the spreading illumination, the dark industrial space — and returns a deep green field with two opposed forms: a white explosive burst at left, radiating lines spreading outward with the force of a solar event, and a dark mass at right with a small luminous eye at its center. A golden arc sweeps between them, connecting the two light sources the way fire connects a building to the sky. A dark rectangle holds the lower center. The algorithm does not know which side of the conflict it is reading: it found fire inside a building, and made a painting about two sources of light in a dark field.' },
+  { day: 33, title: 'The Generals', curatorial: 'The source is a photograph from inside the White House: a formal ceremony with rows of military officers seated in uniform — Navy, Army, Coast Guard, generals and admirals — facing a podium, and behind them on the wall, a large painted portrait of the Commander-in-Chief. The algorithm reads the texture of the room — the warm stone and marble, the block-like receding pattern of the walls and floor — and returns a field of sandy stone-block marks, the institutional interior rendered as surface rather than space. Two white diagonal sweeps cut through the field like light falling across a ceremonial room, or structural lines that refuse to carry the weight of what is being conducted beneath them. At lower center, a solitary dark silhouette: the size of a seated person, the shape of someone present at a ceremony they did not choose. The generals occupy the texture. One figure occupies the light.' },
+  { day: 34, title: 'The Council', curatorial: 'The source is the United Nations Security Council chamber in session: the round table, the delegates arrayed in their arc, the chamber\\\'s mural visible behind them. The algorithm reads the circular architecture of multilateral deliberation and returns it as an enormous oval that contains the entire composition — the shape of the table, the shape of the institution, rendered as the painting\\\'s primary form. Within the oval, a horizontal band of marks runs across the center: small figurative marks in red and ochre, a compass-rose circle, rectangular forms, the scattered residue of proceedings. The ground is gray and cream — the color of unresolved business, of meetings that did not stop what they were convened to address. The oval border contains everything and resolves nothing. The series continues.' },
+  { day: 35, title: 'The Parliament', curatorial: 'The source is a session of the Iranian parliament — figures in military dress standing behind the chamber podium, three raising fists in unison while the chairman remains seated. The algorithm reads the amber warmth of the wood-paneled chamber and the horizontal spread of figures at the dais and returns it as lateral velocity: institutional warmth rendered as directional force. The raised fists — a gesture the algorithm cannot interpret as gesture — become cylindrical architectural elements in a connected horizontal band, each unit touching the next. The chamber\'s warmth becomes the painting\'s temperature. The collective declaration becomes infrastructure.' },
+  { day: 36, title: 'The Market', curatorial: 'The source is the interior of a destroyed commercial building — steel beams standing above total debris, the structure\'s skeleton intact while everything it once supported is gone. The algorithm reads the grey-green lattice of exposed metal and returns it as dense diagonal cross-hatching: the building\'s structural grid translated directly into painterly mark. The pearl-white passages opening within the green are the sky, visible now through what was ceiling and roof. Structural dissolution rendered as density rather than absence — the painting holds as tightly as the building holds its bones. The skeleton is still the shape of the thing.' },
+  { day: 37, title: 'The Building', curatorial: 'The source is a collapsed residential building — the facade removed, the interior floors exposed, the warm plaster and concrete of former rooms now open to sky. The algorithm reads the pale blush-pink of interior walls, the cream of concrete dust, and returns a diagonal cascade across the full canvas: the inside of the building become the painting\'s surface. The vertical striations within the pale field are structural memory — the ghosted floor lines of rooms that no longer exist. Cool lavender-blue shadows thread through the warm field where the exterior sky has entered. The algorithm has made the building\'s interior its exterior, which is exactly what happened to the building.' },
+  { day: 38, title: 'What Remains', curatorial: 'The source is a photograph taken in near-darkness: a person holding a small pink child\'s doll pressed against their chest, the doll\'s face visible above clasped hands, its pink hat catching what little light there is. The algorithm reads the deep blue-grey of the coat and the low ambient light and returns the navy mass — the dark weight of a figure pressing inward from the left. The crimson-red appears at the small vertical forms descending through the center: the precise location of the doll\'s pink hat, translated through the model\'s trained palette into the series\' signature red. The dense constellation of marks scattered across the pale ground: one mark for each thing no longer present. This is the series\' most intimate source and its most formally restrained painting.' },
+  { day: 39, title: 'The Announcement', curatorial: 'Day 39 of the conflict. On April 7, 2026, the US, Israel, and Iran agreed to a two-week ceasefire brokered by Pakistan, with Trump announcing it before his stated deadline. The painting\'s pale, open field — the lightest atmospheric register since Day 25 — reads directly: authority as dispersal, the announcement as an event that diffuses without landing, mass without weight. The ceasefire is the first suspension of hostilities in the series. The algorithm does not know this. It only records what the light looks like in the source.' },
+  { day: 40, title: 'From Above', curatorial: 'The source is a satellite photograph of a burning facility — taken from altitude during the ceasefire period, the burn appears as a dark stain on pale desert ground, the surrounding infrastructure reduced to the scale of marks. The algorithm reads the image as the satellite reads the earth: formal data without scale, presence without consequence. Bone-white ground, dark charcoal arc, scattered rectangular forms as the facility\'s grid. The algorithm has made the same painting the satellite makes — an image in which the event is visible but unweighted, violence present but unscaled. From altitude, a burning facility and a shadow have the same formal mass.' },
+  { day: 41, title: 'Night Search', curatorial: 'The source is a night photograph of rescue workers standing on collapsed rubble — fire visible below and around them, orange and crimson at maximum exposure, the workers\' silhouettes absorbed into the heat. The algorithm reads the image and returns maximum color temperature: the entire canvas consumed by orange-vermillion and crimson-red, with no cool register except at the far edges. White striations are the rescue lights cutting through fire; dark blot marks at the upper register are the silhouettes of those searching. The pale ground survives only at upper right and lower left — the only places in the painting where the heat has not reached. This is the series\' hottest painting, and the one in which the algorithm gives the entire surface over to color rather than structure.' },
+  { day: 42, title: 'The Arrival', curatorial: 'The source is a night photograph of a diplomatic arrival at an airport — Iranian officials walking on a red carpet, military and security personnel flanking them, the scene lit against darkness. The algorithm reads the nighttime compression of grouped figures against low ambient light and returns dense, cold silhouette: near-black masses clustered against a gray-green atmospheric ground. The red carpet — which gives the arrival its formal register and its meaning — does not survive the model\'s translation. What remains is the weight of dark grouped forms against mist, arrival as accumulation of mass rather than ceremony. The algorithm records presence without protocol.' },
+  { day: 43, title: 'The Handshake', curatorial: 'The source is a photograph of an Iranian official shaking hands with a Pakistani counterpart in a formal interior — close framing, both figures in dark suits, others gathered behind them, the room visible as warm beige ground. The algorithm reads the close proximity of two figures and the interlacing of dark fabric across pale ground and returns it as architectural network: the handshake rendered as a branching structure occupying the upper two-thirds of the canvas, angular rectangular forms connecting and extending in all directions. Contact becomes the most complex form in the painting. The warm golden-amber band — the sole warm temperature in an otherwise cold palette — is the heat of two hands meeting, preserved as a diagonal seam within the gray density. The algorithm cannot record whether the handshake holds; it only records the shape of contact.' },
+  { day: 44, title: 'The Gathering', curatorial: 'The source is an aerial photograph of a mass rally — tens of thousands of people filling a street, carrying flags and a large portrait raised above the crowd. The image is read from above: bodies are texture, flags are colour field, the crowd has no visible edge within the frame. The algorithm processes the image as a density problem. Individual figures do not resolve; what it extracts is the formal quality of compression — the diagonal thrust of bodies and flagpoles translated into a woven surface of opposing 45-degree strokes. Navy and charcoal cross and re-cross until the field becomes structural rather than gestural. The ghost-ring forms embedded within the weave are the algorithm\'s trace of the portrait: a face too specific to render, preserved as absence. The pink-salmon field at the right is the space the crowd does not occupy.' },
+  { day: 45, title: 'Open Water', curatorial: 'The source is a photograph of a cargo vessel at anchor in open water — a crane arm visible at the bow, the grey sea flat and the sky overcast. The vessel is small within the frame; the image is mostly water and cloud. The algorithm reads a field with almost nothing extractable: the expanse of grey-blue sea and sky return as near-white ground, and only the ship\'s structural elements survive with any density. What it returns is the series\' most reduced painting: a pale celadon cloud-form where the hull sat, a single vertical blue line for the mast or crane, and a scatter of circle outlines across the open field — the portholes, the rings, the apertures, preserved as recurring form across a canvas that is otherwise sky. The blot marks are the only things at full opacity. The algorithm found almost nothing and preserved it with precision.' },
+];
+
+let activeDay = null;
+
+function selectDay(d) {
+  if (activeDay === d.day) return;
+  activeDay = d.day;
+
+  // Update active state on entries
+  document.querySelectorAll('.day-entry').forEach(el => {
+    el.classList.toggle('active', parseInt(el.dataset.day) === d.day);
+  });
+
+  // Show detail panel
+  document.getElementById('detail-empty').style.display = 'none';
+  document.getElementById('detail-content').style.display = 'block';
+
+  const img = document.getElementById('detail-img');
+  img.classList.remove('loaded');
+  img.src = '';
+
+  document.getElementById('detail-day').textContent = 'Day ' + String(d.day).padStart(2, '0');
+  document.getElementById('detail-title').textContent = '\u201c' + d.title + '\u201d';
+  document.getElementById('detail-curatorial').textContent = d.curatorial;
+
+  requestAnimationFrame(() => {
+    img.onload = () => img.classList.add('loaded');
+    img.src = '../artworks-web/day' + d.day + '.jpg';
+    img.alt = 'Day ' + d.day + ': ' + d.title;
+  });
+}
+
+// Build timeline entries
+const container = document.getElementById('timeline-entries');
+DAYS.forEach(d => {
+  const entry = document.createElement('div');
+  entry.className = 'day-entry';
+  entry.dataset.day = d.day;
+  entry.innerHTML = `
+    <div class="artwork-thumb-wrap">
+      <p class="artwork-label">Day ${String(d.day).padStart(2,'0')} &nbsp;&mdash;&nbsp; ${d.title}</p>
+      <img
+        class="artwork-thumb"
+        src="../artworks-web/day${d.day}.jpg"
+        alt="Day ${d.day}: ${d.title}"
+        loading="lazy"
+      >
+    </div>
+  `;
+  entry.addEventListener('click', () => selectDay(d));
+  container.appendChild(entry);
+});
+</script>
+</body>
+</html>
