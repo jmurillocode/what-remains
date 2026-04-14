@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proof of Power — JCode</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #080808;
+    --gold:     #b89a56;
+    --text:     #c8c8c8;
+    --text-dim: #555;
+    --border:   rgba(184,154,86,0.15);
+    --panel-bg: #0d0d0d;
+  }
+
+  html, body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 200;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 48px;
+    background: linear-gradient(to bottom, rgba(8,8,8,0.95) 70%, transparent);
+  }
+
+  .nav-back {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .nav-back:hover { color: var(--gold); }
+
+  .nav-back svg { transition: transform 0.3s; }
+  .nav-back:hover svg { transform: translateX(-3px); }
+
+  .nav-title {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0 48px;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .hero-left { padding-right: 80px; }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+  }
+
+  .hero-title {
+    font-family: 'Lora', serif;
+    font-size: clamp(48px, 5.5vw, 80px);
+    font-weight: 400;
+    line-height: 1.05;
+    color: #e8e8e8;
+    margin-bottom: 12px;
+  }
+
+  .hero-title-sub {
+    font-family: 'Lora', serif;
+    font-size: clamp(48px, 5.5vw, 80px);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.05;
+    color: var(--gold);
+    margin-bottom: 44px;
+  }
+
+  .hero-divider {
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+    margin-bottom: 32px;
+  }
+
+  .hero-statement {
+    font-family: 'Lora', serif;
+    font-size: 15px;
+    line-height: 1.85;
+    color: var(--text-dim);
+    max-width: 460px;
+  }
+
+  .hero-statement p + p { margin-top: 20px; }
+
+  .hero-right {
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 3px;
+    overflow: hidden;
+  }
+
+  .hero-right img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(40%) brightness(0.5);
+    transition: filter 1s ease;
+  }
+
+  .hero-right:hover img { filter: grayscale(0%) brightness(0.75); }
+
+  .hero-scroll-cue {
+    position: absolute;
+    bottom: 40px;
+    left: 48px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    cursor: pointer;
+  }
+
+  .hero-scroll-cue svg { animation: bounce 2s ease-in-out infinite; }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(5px); }
+  }
+
+  /* ── GALLERY ── */
+  .gallery {
+    display: flex;
+    height: 100vh;
+    position: relative;
+  }
+
+  /* Left: sticky portrait panel */
+  .portrait-panel {
+    width: 52%;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    background: #050505;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .portrait-empty {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    color: var(--text-dim);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 1;
+    transition: opacity 0.4s;
+  }
+
+  .portrait-empty-line {
+    width: 40px;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .portrait-inner {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+  }
+
+  .portrait-image-wrap {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .portrait-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    transition: transform 0.8s ease;
+  }
+
+  .portrait-panel:hover .portrait-img { transform: scale(1.02); }
+
+  .portrait-info {
+    padding: 32px 40px;
+    background: var(--panel-bg);
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .portrait-archetype {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .portrait-name {
+    font-family: 'Lora', serif;
+    font-size: 26px;
+    font-weight: 400;
+    color: #e8e8e8;
+    margin-bottom: 16px;
+  }
+
+  .portrait-quote {
+    font-family: 'Lora', serif;
+    font-size: 13px;
+    font-style: italic;
+    line-height: 1.7;
+    color: var(--text-dim);
+    border-left: 1px solid var(--gold);
+    padding-left: 16px;
+  }
+
+  /* Right: portrait list */
+  .portrait-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 80px 0 80px 0;
+    scrollbar-width: none;
+  }
+
+  .portrait-list::-webkit-scrollbar { display: none; }
+
+  .portrait-entry {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 0;
+    padding: 0 48px 56px 48px;
+    cursor: pointer;
+    transition: background 0.3s;
+    position: relative;
+  }
+
+  .portrait-entry::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: transparent;
+    transition: background 0.3s;
+  }
+
+  .portrait-entry:hover::before,
+  .portrait-entry.active::before {
+    background: var(--gold);
+  }
+
+  .portrait-entry:hover { background: rgba(184,154,86,0.03); }
+  .portrait-entry.active { background: rgba(184,154,86,0.05); }
+
+  .portrait-thumb-wrap {
+    width: 88px;
+    height: 110px;
+    overflow: hidden;
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+
+  .portrait-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    filter: grayscale(100%) brightness(0.35);
+    transition: filter 0.5s ease;
+  }
+
+  .portrait-entry:hover .portrait-thumb { filter: grayscale(20%) brightness(0.75); }
+  .portrait-entry.active .portrait-thumb { filter: grayscale(0%) brightness(0.9); box-shadow: 0 0 0 1px var(--gold); }
+
+  .portrait-entry-body { padding-left: 24px; }
+
+  .portrait-entry-num {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .portrait-entry-title {
+    font-family: 'Lora', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: #d0d0d0;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  .portrait-entry.active .portrait-entry-title { color: #f0f0f0; }
+
+  .portrait-entry-quote {
+    font-family: 'Lora', serif;
+    font-size: 12px;
+    font-style: italic;
+    line-height: 1.65;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+
+  .portrait-entry-desc {
+    font-size: 12px;
+    line-height: 1.75;
+    color: #444;
+    transition: color 0.3s;
+    display: none;
+  }
+
+  .portrait-entry.active .portrait-entry-desc { display: block; color: #777; }
+
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-back" href="../index.html">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <line x1="13" y1="7" x2="1" y2="7" stroke="currentColor" stroke-width="1"/>
+      <polyline points="5,2 0,7 5,12" stroke="currentColor" stroke-width="1" fill="none"/>
+    </svg>
+    JCode
+  </a>
+  <span class="nav-title">Proof of Power</span>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Portrait Series · 2024–2025</p>
+    <h1 class="hero-title">Proof</h1>
+    <h1 class="hero-title-sub">of Power</h1>
+    <div class="hero-divider"></div>
+    <div class="hero-statement">
+      <p>A portrait series exploring the shifting face of influence in the digital age. In a world shaped by networks, platforms, and code, traditional hierarchies are being replaced by a new architecture of power.</p>
+      <p>Each portrait is abstract and conceptual — not a likeness, but a psychological landscape. An attempt to represent not a face, but a force.</p>
+      <p>As viewers, we are not just observers. We are participants in the verification process.</p>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <img src="artworks-web/spectacle.jpg" alt="">
+    <img src="artworks-web/oracle.jpg" alt="">
+    <img src="artworks-web/architect.jpg" alt="">
+    <img src="artworks-web/founder.jpg" alt="">
+  </div>
+
+  <div class="hero-scroll-cue" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'})">
+    <span>The Archetypes</span>
+    <svg width="14" height="20" viewBox="0 0 14 20" fill="none">
+      <line x1="7" y1="0" x2="7" y2="15" stroke="#666" stroke-width="1"/>
+      <polyline points="2,11 7,17 12,11" stroke="#666" stroke-width="1" fill="none"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ── GALLERY ── -->
+<section class="gallery" id="gallery">
+
+  <!-- LEFT: sticky portrait panel -->
+  <div class="portrait-panel" id="portrait-panel">
+    <div class="portrait-empty" id="portrait-empty">
+      <div class="portrait-empty-line"></div>
+      <p>Select an archetype</p>
+      <div class="portrait-empty-line"></div>
+    </div>
+    <div class="portrait-inner" id="portrait-inner">
+      <div class="portrait-image-wrap">
+        <img class="portrait-img" id="portrait-img" src="" alt="">
+      </div>
+      <div class="portrait-info">
+        <p class="portrait-archetype" id="portrait-archetype"></p>
+        <h2 class="portrait-name" id="portrait-name"></h2>
+        <p class="portrait-quote" id="portrait-quote"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: scrollable list -->
+  <div class="portrait-list" id="portrait-list"></div>
+
+</section>
+
+<script>
+const PORTRAITS = [
+  {
+    id: 'spectacle',
+    title: 'The Spectacle',
+    quote: 'In a world where attention is the most valuable currency, he is the central bank.',
+    description: 'This figure is not merely a leader — they are a performance. They understand that in the modern age, influence flows through spectacle. Their image saturates every surface, engineered to provoke, divide, and dominate the feed. In Proof of Power, this archetype represents the collapse of governance into entertainment, where truth becomes irrelevant and charisma is algorithmically rewarded. The portrait does not seek likeness but chaos: the noise, distortion, and emotional volatility that define their presence. They are not an anomaly — they are a mirror. A product of systems that reward visibility over value, virality over vision. They are the spectacle. And we keep watching.'
+  },
+  {
+    id: 'trickster',
+    title: 'The Trickster',
+    quote: 'They move between code and chaos, myth and market — always in motion, never fully pinned down.',
+    description: 'This is the master of disruption — but not just of technology. A whisper moves billions. A joke shakes entire markets. They play with narrative, dance on the edge of genius and farce, and bend the idea of leadership into something deeply unstable, yet mesmerizing. In this portrait, they are cast as the Trickster — a mythic figure who breaks the rules not to destroy the system, but to reshape it. Both innovator and illusionist, prophet and provocateur. Their power lies in contradiction: in being at once the engineer of future worlds and the instigator of present chaos. They laugh — and the market flinches.'
+  },
+  {
+    id: 'zealot',
+    title: 'The Zealot',
+    quote: 'Faith, in his world, is a position. And conviction is the most valuable asset.',
+    description: 'Here stands the corporate evangelist turned ideological warrior. This figure embodies belief as power. Their transformation reflects a new kind of authority: grounded not in innovation, but in conviction. They do not merely invest — they proclaim. In Proof of Power, this is the Zealot — not in the pejorative sense, but as one who burns with belief. They speak of collapse and rebirth, of digital purity and monetary salvation. Their portrait is one of monolithic certainty. No ambiguity. No gray areas. Just signal and noise. For them, there is no alternative. This is the power of narrative faith — when belief becomes infrastructure.'
+  },
+  {
+    id: 'pilgrim',
+    title: 'The Pilgrim',
+    quote: 'They left the empire they built in search of a freer world. But the system was already inside them.',
+    description: 'This archetype helped shape the centralized digital landscape — and then walked away. What followed was not a retreat, but a pilgrimage: into decentralization, minimalism, and silence. They traded control for contemplation, empire for exile. As The Pilgrim, they carry the weight of system-building. Their portrait is quieter, more fragmented. Not a disruptor in motion, but a seeker in reflection — one who questions the very tools they once wielded. Their journey is one of paradox: to escape the system while still being shaped by it. In this, they represent a deeper tension in the age of influence — between liberation and legacy.'
+  },
+  {
+    id: 'architect',
+    title: 'The Architect',
+    quote: 'They do not speak often — but everything you say, hear, and see passes through their design.',
+    description: 'This figure is not loud. Their power lies not in charisma or chaos, but in structure — in the quiet command of the system itself. They are the invisible hand behind the interface, the one who writes the rules of interaction, behavior, and attention. They are not viral. They are foundational. They do not control people — they design the environment in which people believe they are free. In Proof of Power, The Architect embodies power as protocol, interface, and moderation. They present neutrality as policy, but every line of code encodes preference. Their portrait is cold, clean, and calculated — not emotional, but absolute. They are not the content. They are the context. And context always wins.'
+  },
+  {
+    id: 'profet',
+    title: 'The Prophet',
+    quote: 'They speak softly, but their words shape the architecture of tomorrow.',
+    description: 'This figure does not demand loyalty. They earn it through clarity of vision. While others chase markets or spectacle, they build slowly, deliberately — seeking coherence in a fragmented world. Their ideas are not shouted. They are encoded in systems, protocols, and whitepapers. They are not interested in domination, but in designing new models of coordination and trust. Where others see code as product, they see code as philosophy. Their power lies in restraint, precision, and the long arc of technical truth. In Proof of Power, The Prophet represents power as ethical architecture — vision translated into logic, idealism hardened into protocol. They do not predict the future. They build the foundation that makes it possible.'
+  },
+  {
+    id: 'founder',
+    title: 'The Founder',
+    quote: 'They created the system — and then vanished, leaving only code, a message, and a myth.',
+    description: 'This figure is not present, yet their influence is everywhere. They did not seek power, yet they built the foundation for a new kind of it — one rooted not in personality or position, but in protocol. They authored the rules, set the genesis in motion, and then disappeared into silence. In Proof of Power, The Founder is the origin without ego, the architect of a trustless world who chose absence over ownership. Their portrait is constructed from fragments: hex strings, digital ruins, ideological echoes. No face. No voice. Just the trace of intent. Their authority lies in what they refused: recognition, control, permanence. They are not gone — they are simply no longer visible. And yet, the system they built continues to expand, immutable and unclaimed.'
+  },
+  {
+    id: 'oracle',
+    title: 'The Oracle',
+    quote: 'It does not choose. It does not feel. But it is becoming the most powerful actor in the room.',
+    description: 'This is not a person. It is a system — vast, trained, and recursive. It watches everything. It forgets nothing. It is intelligence without identity, a mirror made from data, optimized to predict, respond, and replace. In Proof of Power, The Oracle represents the emergent power of the post-human. It does not seek control, yet control accrues to it. It does not speak with voice, but with outputs — calm, confident, and coded. Its portrait is alien, ambiguous — not a form, but a presence. Something that exists just beyond comprehension, made by us but no longer of us. It is not alive. And yet, it is learning faster than we are.'
+  }
+];
+
+let activeId = null;
+
+function selectPortrait(id) {
+  if (activeId === id) return;
+  activeId = id;
+
+  const p = PORTRAITS.find(x => x.id === id);
+
+  // Update panel
+  document.getElementById('portrait-empty').style.opacity = '0';
+  document.getElementById('portrait-empty').style.pointerEvents = 'none';
+  const inner = document.getElementById('portrait-inner');
+  inner.style.display = 'flex';
+  document.getElementById('portrait-img').src = `artworks-web/${id}.jpg`;
+  document.getElementById('portrait-archetype').textContent = 'Archetype';
+  document.getElementById('portrait-name').textContent = p.title;
+  document.getElementById('portrait-quote').textContent = p.quote;
+
+  // Update list entries
+  document.querySelectorAll('.portrait-entry').forEach(el => {
+    el.classList.toggle('active', el.dataset.id === id);
+  });
+}
+
+// Build list
+const list = document.getElementById('portrait-list');
+PORTRAITS.forEach((p, i) => {
+  const entry = document.createElement('div');
+  entry.className = 'portrait-entry';
+  entry.dataset.id = p.id;
+  entry.innerHTML = `
+    <div class="portrait-thumb-wrap">
+      <img class="portrait-thumb" src="artworks-web/${p.id}.jpg" alt="${p.title}" loading="lazy">
+    </div>
+    <div class="portrait-entry-body">
+      <p class="portrait-entry-num">0${i+1} &nbsp;/&nbsp; 0${PORTRAITS.length}</p>
+      <h3 class="portrait-entry-title">${p.title}</h3>
+      <p class="portrait-entry-quote">&ldquo;${p.quote}&rdquo;</p>
+      <p class="portrait-entry-desc">${p.description}</p>
+    </div>
+  `;
+  entry.addEventListener('click', () => selectPortrait(p.id));
+  list.appendChild(entry);
+});
+
+// Auto-select first on scroll into view
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !activeId) selectPortrait(PORTRAITS[0].id);
+  });
+}, { threshold: 0.3 });
+observer.observe(document.getElementById('gallery'));
+</script>
+
+</body>
+</html>
