@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collect — JCode</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #080808;
+    --gold:     #b89a56;
+    --text:     #c8c8c8;
+    --text-dim: #666;
+    --text-bright: #ebebeb;
+    --border:   rgba(184,154,86,0.18);
+    --card-bg:  #0d0d0d;
+    --line:     #1c1c1c;
+  }
+
+  html { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; }
+
+  body { min-height: 100vh; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 48px;
+    background: linear-gradient(to bottom, var(--bg) 60%, transparent);
+  }
+
+  .nav-name {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active { color: var(--gold); }
+
+  /* ── HEADER ── */
+  .header {
+    padding: 120px 48px 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+    font-weight: 500;
+  }
+
+  .header-title {
+    font-family: 'Lora', serif;
+    font-size: clamp(48px, 5vw, 76px);
+    font-weight: 400;
+    color: var(--text-bright);
+    letter-spacing: -0.01em;
+    line-height: 1.0;
+    margin-bottom: 40px;
+  }
+
+  .header-divider {
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+    margin-bottom: 32px;
+  }
+
+  .header-intro {
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text-dim);
+    max-width: 620px;
+  }
+
+  /* ── GRID ── */
+  .collection-section {
+    padding: 48px 48px 72px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 48px;
+  }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .section-meta {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+
+  .project-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--card-bg);
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+    transition: background 0.4s;
+    min-height: 0;
+  }
+
+  .project-card.available { cursor: pointer; }
+  .project-card.available:hover { background: #111; }
+
+  .project-card-image-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    background: #111;
+  }
+
+  .project-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(40%) brightness(0.7);
+    transition: filter 0.6s ease, transform 0.8s ease;
+    display: block;
+  }
+
+  .project-card.available:hover .project-card-image {
+    filter: grayscale(0%) brightness(0.95);
+    transform: scale(1.03);
+  }
+
+  .project-card-body {
+    padding: 28px 36px 32px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .project-card-year {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+
+  .project-card-title {
+    font-family: 'Lora', serif;
+    font-size: 30px;
+    font-weight: 400;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+
+  .project-card-desc {
+    font-size: 13px;
+    line-height: 1.75;
+    color: var(--text-dim);
+    margin-bottom: 32px;
+  }
+
+  .project-card-footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .project-card-supply {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+
+  .project-card-supply .dim { color: var(--text-dim); }
+
+  .project-card-enter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    transition: color 0.3s;
+  }
+
+  .project-card.available:hover .project-card-enter { color: var(--gold); }
+  .project-card-enter svg { transition: transform 0.3s; }
+  .project-card.available:hover .project-card-enter svg { transform: translateX(4px); }
+
+  /* Placeholder / Coming Soon card */
+  .project-card.coming-soon {
+    cursor: default;
+    opacity: 0.55;
+  }
+
+  .project-card.coming-soon .project-card-image-wrap {
+    background: repeating-linear-gradient(
+      45deg,
+      #0d0d0d,
+      #0d0d0d 1px,
+      #111 1px,
+      #111 12px
+    );
+  }
+
+  .project-card.coming-soon .project-card-image { display: none; }
+
+  .project-card.coming-soon .project-card-year { color: #444; }
+  .project-card.coming-soon .project-card-title { color: #555; }
+  .project-card.coming-soon .project-card-desc { color: #333; }
+  .project-card.coming-soon .project-card-enter { color: #444; }
+  .project-card.coming-soon .project-card-supply { color: #444; }
+
+  .status-badge {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    padding: 6px 12px;
+    background: rgba(8,8,8,0.85);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+    backdrop-filter: blur(8px);
+    z-index: 2;
+  }
+
+  .status-badge.dim {
+    border-color: #333;
+    color: #555;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 48px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-name {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .footer-links a:hover { color: var(--gold); }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .header { padding: 140px 28px 64px; }
+    .collection-section { padding: 56px 28px 80px; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .project-card { min-height: 0; }
+    .project-card-body { padding: 32px 32px 36px; }
+    nav { padding: 20px 24px; }
+    .nav-links { gap: 20px; }
+    footer { padding: 32px 24px; flex-direction: column; gap: 20px; }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-name" href="../index.html">JCode</a>
+  <ul class="nav-links">
+    <li><a href="../index.html#works">Works</a></li>
+    <li><a href="index.html" class="active">Collect</a></li>
+    <li><a href="https://instagram.com/jmurillo.art" target="_blank">Instagram</a></li>
+    <li><a href="https://x.com/jmurillocode" target="_blank">X</a></li>
+  </ul>
+</nav>
+
+<!-- ── HEADER ── -->
+<header class="header">
+  <p class="header-eyebrow">Collect JCode · Art on Ethereum</p>
+  <h1 class="header-title">Collect</h1>
+  <div class="header-divider"></div>
+</header>
+
+<!-- ── PROJECTS GRID ── -->
+<section class="collection-section">
+
+  <div class="projects-grid">
+
+    <!-- Proof of Power — LIVE (sold out) -->
+    <a class="project-card available" href="proof-of-power/index.html">
+      <div class="project-card-image-wrap">
+        <span class="status-badge dim" style="border-color:#555; color:#999;">Sold Out</span>
+        <img class="project-card-image" src="../proof-of-power/artworks-web/founder.jpg" alt="Proof of Power">
+      </div>
+      <div class="project-card-body">
+        <p class="project-card-year">2025 · Abstract Portraiture</p>
+        <h2 class="project-card-title">Proof of Power</h2>
+        <p class="project-card-desc">
+          8 abstract portraits of power in the digital age — archetypes rendered not as likenesses, but as psychological landscapes. Each figure is a force: a symbol of how influence is constructed, performed, and believed.
+        </p>
+        <div class="project-card-footer">
+          <span class="project-card-supply">0 / 8 <span class="dim">available</span></span>
+          <span class="project-card-enter">
+            View
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <line x1="0" y1="8" x2="13" y2="8" stroke="currentColor" stroke-width="1"/>
+              <polyline points="8,3 14,8 8,13" stroke="currentColor" stroke-width="1" fill="none"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </a>
+
+    <!-- Fracture — LIVE (sold out) -->
+    <a class="project-card available" href="fracture/index.html">
+      <div class="project-card-image-wrap">
+        <span class="status-badge dim" style="border-color:#555; color:#999;">Sold Out</span>
+        <img class="project-card-image" src="../fracture/artworks-web/i-tried-to-be-seen.jpg" alt="Fracture">
+      </div>
+      <div class="project-card-body">
+        <p class="project-card-year">2025 · Generative &amp; AI</p>
+        <h2 class="project-card-title">Fracture</h2>
+        <p class="project-card-desc">
+          15 generative portraits exploring digital identity and fragmentation. The first series to deeply embed AI into the creative workflow — three layers of code, algorithm, and machine interpretation converging into abstracted self.
+        </p>
+        <div class="project-card-footer">
+          <span class="project-card-supply">0 / 15 <span class="dim">available</span></span>
+          <span class="project-card-enter">
+            View
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <line x1="0" y1="8" x2="13" y2="8" stroke="currentColor" stroke-width="1"/>
+              <polyline points="8,3 14,8 8,13" stroke="currentColor" stroke-width="1" fill="none"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <span class="footer-name">JCode · 2026</span>
+  <ul class="footer-links">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="https://instagram.com/jmurillo.art" target="_blank">Instagram</a></li>
+    <li><a href="https://x.com/jmurillocode" target="_blank">X</a></li>
+  </ul>
+</footer>
+
+</body>
+</html>

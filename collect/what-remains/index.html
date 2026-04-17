@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collect · What Remains — JCode</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:          #080808;
+    --gold:        #b89a56;
+    --gold-dim:    rgba(184,154,86,0.2);
+    --text:        #c8c8c8;
+    --text-dim:    #666;
+    --text-bright: #ebebeb;
+    --border:      rgba(184,154,86,0.18);
+    --card-bg:     #0d0d0d;
+    --line:        #1c1c1c;
+  }
+
+  html { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; }
+  body { min-height: 100vh; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 48px;
+    background: linear-gradient(to bottom, var(--bg) 60%, transparent);
+  }
+  .nav-name {
+    font-size: 13px; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--text); text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    font-size: 11px; font-weight: 400; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--text-dim);
+    text-decoration: none; transition: color 0.3s;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+
+  /* ── BREADCRUMB ── */
+  .breadcrumb {
+    padding: 120px 48px 0;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .breadcrumb a {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: color 0.3s;
+  }
+  .breadcrumb a:hover { color: var(--gold); }
+  .breadcrumb svg { transition: transform 0.3s; }
+  .breadcrumb a:hover svg { transform: translateX(-4px); }
+
+  /* ── HEADER ── */
+  .header {
+    padding: 60px 48px 80px;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: end;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+    font-weight: 500;
+  }
+
+  .header-title {
+    font-family: 'Lora', serif;
+    font-size: clamp(48px, 5vw, 76px);
+    font-weight: 400;
+    color: var(--text-bright);
+    letter-spacing: -0.01em;
+    line-height: 1.0;
+  }
+
+  .header-title .sub { display: block; }
+
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .header-intro {
+    font-family: 'Lora', serif;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+  }
+
+  /* Stats line */
+  .header-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+
+  .stat-value {
+    font-family: 'Lora', serif;
+    font-size: 22px;
+    color: var(--text-bright);
+    font-weight: 400;
+  }
+
+  .stat-value .dim { color: var(--text-dim); font-size: 14px; }
+
+  /* ── ARTWORKS GRID ── */
+  .works-section {
+    padding: 80px 48px 120px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .works-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 48px;
+  }
+
+  .works-count {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .works-filters {
+    display: flex;
+    gap: 2px;
+    background: var(--line);
+    padding: 2px;
+  }
+
+  .filter-btn {
+    padding: 8px 16px;
+    background: transparent;
+    color: var(--text-dim);
+    border: none;
+    font-family: inherit;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.3s, background 0.3s;
+  }
+
+  .filter-btn:hover { color: var(--text); }
+  .filter-btn.active {
+    background: var(--bg);
+    color: var(--gold);
+  }
+
+  .artworks-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .artwork-card {
+    background: var(--card-bg);
+    border: 1px solid var(--line);
+    transition: border-color 0.4s, transform 0.4s;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .artwork-card.available:hover {
+    border-color: var(--gold-dim);
+    transform: translateY(-2px);
+  }
+
+  .artwork-image-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    background: #111;
+  }
+
+  .artwork-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: filter 0.6s ease, opacity 0.6s ease;
+  }
+
+  .artwork-card.collected .artwork-image {
+    filter: grayscale(85%) brightness(0.45);
+    opacity: 0.7;
+  }
+
+  .collected-ribbon {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 5px 10px;
+    background: rgba(8,8,8,0.85);
+    border: 1px solid var(--text-dim);
+    color: var(--text-dim);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 500;
+    backdrop-filter: blur(8px);
+  }
+
+  .artwork-body {
+    padding: 24px 28px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+
+  .artwork-day {
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+  }
+
+  .artwork-card.collected .artwork-day { color: var(--text-dim); }
+
+  .artwork-title {
+    font-family: 'Lora', serif;
+    font-size: 19px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-bright);
+    line-height: 1.3;
+    margin-bottom: 6px;
+    min-height: 50px;
+  }
+
+  .artwork-card.collected .artwork-title { color: var(--text-dim); }
+
+  .artwork-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .artwork-price {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .artwork-price-label {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .artwork-price-value {
+    font-family: 'Lora', serif;
+    font-size: 17px;
+    color: var(--text-bright);
+    font-weight: 400;
+  }
+
+  .artwork-card.collected .artwork-price-value { color: var(--text-dim); }
+
+  /* Collect button */
+  .collect-btn {
+    padding: 10px 18px;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: inherit;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .collect-btn:hover {
+    background: var(--gold);
+    color: var(--bg);
+  }
+
+  .collected-btn {
+    padding: 10px 18px;
+    background: transparent;
+    border: 1px solid #333;
+    color: #555;
+    font-family: inherit;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 500;
+    cursor: not-allowed;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    padding: 16px 28px;
+    background: var(--card-bg);
+    border: 1px solid var(--gold-dim);
+    color: var(--text);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    z-index: 200;
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    pointer-events: none;
+    max-width: 440px;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .toast .gold { color: var(--gold); }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 48px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-name {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .footer-links { display: flex; gap: 28px; list-style: none; }
+  .footer-links a {
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-dim); text-decoration: none; transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--gold); }
+
+  /* Responsive */
+  @media (max-width: 1100px) {
+    .artworks-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 900px) {
+    .header {
+      grid-template-columns: 1fr;
+      padding: 40px 28px 56px;
+      gap: 48px;
+    }
+    .breadcrumb { padding: 100px 28px 0; }
+    .works-section { padding: 56px 28px 80px; }
+    .artworks-grid { grid-template-columns: 1fr; gap: 24px; }
+    .header-stats { grid-template-columns: 1fr 1fr; gap: 20px; }
+    nav { padding: 20px 24px; }
+    .nav-links { gap: 20px; }
+    footer { padding: 32px 24px; flex-direction: column; gap: 20px; }
+    .works-controls { flex-direction: column; align-items: flex-start; gap: 20px; }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-name" href="../../index.html">JCode</a>
+  <ul class="nav-links">
+    <li><a href="../../index.html#works">Works</a></li>
+    <li><a href="../index.html" class="active">Collect</a></li>
+    <li><a href="https://instagram.com/jmurillo.art" target="_blank">Instagram</a></li>
+    <li><a href="https://x.com/jmurillocode" target="_blank">X</a></li>
+  </ul>
+</nav>
+
+<!-- ── BREADCRUMB ── -->
+<div class="breadcrumb">
+  <a href="../index.html">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+      <line x1="16" y1="8" x2="3" y2="8" stroke="currentColor" stroke-width="1"/>
+      <polyline points="8,3 2,8 8,13" stroke="currentColor" stroke-width="1" fill="none"/>
+    </svg>
+    Collect
+  </a>
+</div>
+
+<!-- ── HEADER ── -->
+<header class="header">
+  <div class="header-left">
+    <p class="header-eyebrow">Series · 2026</p>
+    <h1 class="header-title">
+      What
+      <span class="sub">Remains</span>
+    </h1>
+  </div>
+
+  <div class="header-right">
+    <p class="header-intro">
+      47 generative paintings made day by day across the Iran–Israel conflict. Each work is a single edition, fixed price, permanent on Ethereum. Once collected, the work belongs to one place.
+    </p>
+
+    <div class="header-stats">
+      <div>
+        <p class="stat-label">Supply</p>
+        <p class="stat-value" id="stat-supply">— <span class="dim">/ 47</span></p>
+      </div>
+      <div>
+        <p class="stat-label">Price</p>
+        <p class="stat-value">0.08 <span class="dim">ETH</span></p>
+      </div>
+      <div>
+        <p class="stat-label">Chain</p>
+        <p class="stat-value">Ethereum</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ── ARTWORKS GRID ── -->
+<section class="works-section">
+  <div class="works-controls">
+    <span class="works-count" id="works-count">47 works</span>
+    <div class="works-filters" role="tablist">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="available">Available</button>
+      <button class="filter-btn" data-filter="collected">Collected</button>
+    </div>
+  </div>
+
+  <div class="artworks-grid" id="artworks-grid"></div>
+</section>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast">
+  <span class="gold">Wallet integration pending.</span><br>
+  This is a visual preview — once the contract is deployed and wallet connect is wired up, this button will open the mint flow.
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <span class="footer-name">JCode · 2026</span>
+  <ul class="footer-links">
+    <li><a href="../../index.html">Home</a></li>
+    <li><a href="../index.html">Collect</a></li>
+    <li><a href="https://instagram.com/jmurillo.art" target="_blank">Instagram</a></li>
+    <li><a href="https://x.com/jmurillocode" target="_blank">X</a></li>
+  </ul>
+</footer>
+
+<script>
+/* ─────────────────────────────────────────────
+   WHAT REMAINS — Collect page
+   Placeholder data until the contract is deployed.
+   Once live, replace `ARTWORKS` with data fetched
+   from the contract / Reservoir / your indexer.
+   ───────────────────────────────────────────── */
+
+const PRICE_ETH = 0.08;
+
+const ARTWORK_TITLES = [
+  "First Night","Quartz","Nearly Transparent","Morning","Warmth","Dispersal","Layered","Energy",
+  "Field","Conversation","No Edge","What She Carried","Architecture and Event","The Refinery from Space",
+  "What the Hands Found","No War with Iran","Someone's Floor","Face to Face","Fireball","Something to Hold",
+  "Bread Rings on a Flag","The Ordnance","We Are Still Here","Small Fire at a Large Fence","The Persia",
+  "The Hole in the Street","She Takes His Hand","The Moment of Release","Raised","The Man in the Navy Suit",
+  "The Bazaar","Into the Burning","The Generals","The Council","The Parliament","The Market","The Building",
+  "What Remains","The Announcement","From Above","Night Search","The Arrival","The Handshake","The Gathering",
+  "Open Water","Geometry","Convergence"
+];
+
+// Pre-mark a handful as "collected" so both states are visible in the preview.
+// This is purely visual until wallet/contract integration is wired up.
+const PRESEEDED_COLLECTED = new Set([1, 5, 13, 22, 30, 38]);
+
+const ARTWORKS = ARTWORK_TITLES.map((title, i) => ({
+  day: i + 1,
+  title,
+  priceEth: PRICE_ETH,
+  image: `../../artworks-web/day${i + 1}.jpg`,
+  collected: PRESEEDED_COLLECTED.has(i + 1),
+}));
+
+/* ── State ── */
+let currentFilter = 'all';
+
+/* ── Render ── */
+const grid = document.getElementById('artworks-grid');
+const worksCountEl = document.getElementById('works-count');
+const statSupplyEl = document.getElementById('stat-supply');
+const toastEl = document.getElementById('toast');
+let toastTimeout;
+
+function availableCount() {
+  return ARTWORKS.filter(a => !a.collected).length;
+}
+
+function updateStats() {
+  const avail = availableCount();
+  statSupplyEl.innerHTML = `${avail} <span class="dim">/ ${ARTWORKS.length}</span>`;
+}
+
+function render() {
+  const list = ARTWORKS.filter(a => {
+    if (currentFilter === 'available') return !a.collected;
+    if (currentFilter === 'collected') return a.collected;
+    return true;
+  });
+
+  worksCountEl.textContent =
+    currentFilter === 'all'
+      ? `${ARTWORKS.length} works · ${availableCount()} available`
+      : `${list.length} ${currentFilter}`;
+
+  grid.innerHTML = list.map(a => {
+    const dayStr = String(a.day).padStart(2, '0');
+    const collectedMark = a.collected
+      ? `<span class="collected-ribbon">Collected</span>`
+      : '';
+    const button = a.collected
+      ? `<button class="collected-btn" disabled>Collected</button>`
+      : `<button class="collect-btn" data-day="${a.day}">Collect</button>`;
+
+    return `
+      <article class="artwork-card ${a.collected ? 'collected' : 'available'}">
+        <div class="artwork-image-wrap">
+          ${collectedMark}
+          <img class="artwork-image" src="${a.image}" alt="Day ${a.day}: ${a.title}" loading="lazy">
+        </div>
+        <div class="artwork-body">
+          <p class="artwork-day">Day ${dayStr}</p>
+          <h3 class="artwork-title">"${a.title}"</h3>
+          <div class="artwork-footer">
+            <div class="artwork-price">
+              <span class="artwork-price-label">Price</span>
+              <span class="artwork-price-value">${a.priceEth} ETH</span>
+            </div>
+            ${button}
+          </div>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+/* ── Events ── */
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    render();
+  });
+});
+
+grid.addEventListener('click', (e) => {
+  const btn = e.target.closest('.collect-btn');
+  if (!btn) return;
+  showToast();
+  // Preview-only: visually mark as collected so the state transition is demoable.
+  // Remove this block once wallet/contract integration is in place.
+  const day = Number(btn.dataset.day);
+  const artwork = ARTWORKS.find(a => a.day === day);
+  if (artwork) {
+    artwork.collected = true;
+    updateStats();
+    render();
+  }
+});
+
+function showToast() {
+  clearTimeout(toastTimeout);
+  toastEl.classList.add('show');
+  toastTimeout = setTimeout(() => toastEl.classList.remove('show'), 3500);
+}
+
+/* ── Init ── */
+updateStats();
+render();
+</script>
+
+</body>
+</html>

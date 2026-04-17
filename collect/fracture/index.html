@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collect · Fracture — JCode</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:          #080808;
+    --gold:        #b89a56;
+    --gold-dim:    rgba(184,154,86,0.2);
+    --text:        #c8c8c8;
+    --text-dim:    #666;
+    --text-bright: #ebebeb;
+    --border:      rgba(184,154,86,0.18);
+    --card-bg:     #0d0d0d;
+    --line:        #1c1c1c;
+  }
+
+  html { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; }
+  body { min-height: 100vh; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 48px;
+    background: linear-gradient(to bottom, var(--bg) 60%, transparent);
+  }
+  .nav-name {
+    font-size: 13px; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--text); text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    font-size: 11px; font-weight: 400; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--text-dim);
+    text-decoration: none; transition: color 0.3s;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+
+  /* ── BREADCRUMB ── */
+  .breadcrumb {
+    padding: 120px 48px 0;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .breadcrumb a {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: color 0.3s;
+  }
+  .breadcrumb a:hover { color: var(--gold); }
+  .breadcrumb svg { transition: transform 0.3s; }
+  .breadcrumb a:hover svg { transform: translateX(-4px); }
+
+  /* ── HEADER ── */
+  .header {
+    padding: 60px 48px 80px;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: end;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+    font-weight: 500;
+  }
+
+  .header-title {
+    font-family: 'Lora', serif;
+    font-size: clamp(48px, 5vw, 76px);
+    font-weight: 400;
+    color: var(--text-bright);
+    letter-spacing: -0.02em;
+    line-height: 1.0;
+  }
+
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .header-intro {
+    font-family: 'Lora', serif;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+  }
+
+  .header-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+
+  .stat-value {
+    font-family: 'Lora', serif;
+    font-size: 22px;
+    color: var(--text-bright);
+    font-weight: 400;
+  }
+
+  .stat-value .dim { color: var(--text-dim); font-size: 14px; }
+
+  .stat-value.loading {
+    color: var(--text-dim);
+    font-size: 16px;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50%       { opacity: 1; }
+  }
+
+  /* ── ARTWORKS GRID ── */
+  .works-section {
+    padding: 80px 48px 120px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .works-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 48px;
+  }
+
+  .works-count {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .works-filters {
+    display: flex;
+    gap: 2px;
+    background: var(--line);
+    padding: 2px;
+  }
+
+  .filter-btn {
+    padding: 8px 16px;
+    background: transparent;
+    color: var(--text-dim);
+    border: none;
+    font-family: inherit;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.3s, background 0.3s;
+  }
+
+  .filter-btn:hover { color: var(--text); }
+  .filter-btn.active {
+    background: var(--bg);
+    color: var(--gold);
+  }
+
+  .artworks-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .grid-empty {
+    grid-column: 1 / -1;
+    padding: 80px 0;
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  /* ── ARTWORK CARD ── */
+  .artwork-card {
+    background: var(--card-bg);
+    border: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.4s, transform 0.4s;
+    cursor: pointer;
+  }
+
+  .artwork-card:hover {
+    border-color: var(--gold-dim);
+    transform: translateY(-2px);
+  }
+
+  .artwork-image-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: #060606;
+  }
+
+  .artwork-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 8px;
+    display: block;
+    transition: transform 0.6s ease;
+  }
+
+  .artwork-card:hover .artwork-image { transform: scale(1.03); }
+
+  .collected-ribbon {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 5px 10px;
+    background: rgba(8,8,8,0.85);
+    border: 1px solid var(--text-dim);
+    color: var(--text-dim);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 500;
+    backdrop-filter: blur(8px);
+  }
+
+  .listed-ribbon {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 5px 10px;
+    background: rgba(8,8,8,0.85);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 500;
+    backdrop-filter: blur(8px);
+  }
+
+  .artwork-body {
+    padding: 20px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+
+  .artwork-num {
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  .artwork-title {
+    font-family: 'Lora', serif;
+    font-size: 17px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-bright);
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  /* Owner line */
+  .artwork-owner {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding-top: 4px;
+  }
+
+  .owner-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+
+  .owner-addr {
+    font-family: 'Space Grotesk', monospace;
+    font-size: 11px;
+    color: #555;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: color 0.3s;
+  }
+
+  .owner-addr:hover { color: var(--text); }
+
+  /* Footer */
+  .artwork-footer {
+    margin-top: 4px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .artwork-price {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .artwork-price-label {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .artwork-price-value {
+    font-family: 'Lora', serif;
+    font-size: 15px;
+    color: var(--text-bright);
+    font-weight: 400;
+  }
+
+  .artwork-price-value.loading {
+    color: #333;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+
+  .collected-btn {
+    padding: 9px 14px;
+    background: transparent;
+    border: 1px solid #333;
+    color: #555;
+    font-family: inherit;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 500;
+    cursor: not-allowed;
+    flex-shrink: 0;
+  }
+
+  .view-listing-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 14px;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: inherit;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.3s, color 0.3s;
+    flex-shrink: 0;
+  }
+
+  .view-listing-btn:hover { background: var(--gold); color: var(--bg); }
+  .view-listing-btn svg { transition: transform 0.3s; }
+  .view-listing-btn:hover svg { transform: translateX(2px); }
+
+  /* ── LIGHTBOX ── */
+  .lightbox-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: rgba(4,4,4,0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+    backdrop-filter: blur(6px);
+  }
+
+  .lightbox-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .lightbox {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 1000px;
+    width: 100%;
+    max-height: 90vh;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    transform: translateY(16px);
+    transition: transform 0.35s ease;
+    overflow: hidden;
+  }
+
+  .lightbox-overlay.open .lightbox { transform: translateY(0); }
+
+  .lightbox-close {
+    position: absolute;
+    top: 28px;
+    right: 32px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: color 0.3s;
+    padding: 0;
+  }
+
+  .lightbox-close:hover { color: var(--gold); }
+
+  .lightbox-image-wrap {
+    position: relative;
+    overflow: hidden;
+    background: #060606;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lightbox-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 32px;
+    display: block;
+  }
+
+  .lightbox-details {
+    padding: 52px 48px 48px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+
+  .lightbox-details::-webkit-scrollbar { display: none; }
+
+  .lightbox-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  .lightbox-title {
+    font-family: 'Lora', serif;
+    font-size: clamp(22px, 2.5vw, 34px);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-bright);
+    line-height: 1.2;
+    margin-bottom: 28px;
+  }
+
+  .lightbox-divider {
+    width: 32px;
+    height: 1px;
+    background: var(--gold);
+    margin-bottom: 32px;
+    flex-shrink: 0;
+  }
+
+  .lightbox-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+  }
+
+  .lightbox-meta-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .lightbox-meta-label {
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .lightbox-meta-value {
+    font-family: 'Lora', serif;
+    font-size: 15px;
+    color: var(--text-bright);
+    font-weight: 400;
+  }
+
+  .lightbox-meta-value a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .lightbox-meta-value a:hover { color: var(--gold); }
+
+  .lightbox-meta-value.loading {
+    color: #444;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+
+  .lightbox-action { margin-top: 32px; }
+
+  .lightbox-action .view-listing-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 14px;
+    font-size: 11px;
+  }
+
+  .lightbox-action .collected-btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 11px;
+    text-align: center;
+  }
+
+  .lightbox-nav {
+    position: absolute;
+    bottom: 28px;
+    right: 32px;
+    display: flex;
+    gap: 12px;
+  }
+
+  .lightbox-arrow {
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--text-dim);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.3s, color 0.3s;
+  }
+
+  .lightbox-arrow:hover { border-color: var(--gold); color: var(--gold); }
+  .lightbox-arrow:disabled { opacity: 0.2; cursor: default; }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 48px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-name {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .footer-links { display: flex; gap: 28px; list-style: none; }
+  .footer-links a {
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-dim); text-decoration: none; transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--gold); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1100px) {
+    .artworks-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 900px) {
+    .header { grid-template-columns: 1fr; padding: 40px 28px 56px; gap: 48px; }
+    .breadcrumb { padding: 100px 28px 0; }
+    .works-section { padding: 56px 28px 80px; }
+    .artworks-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .header-stats { grid-template-columns: 1fr 1fr; gap: 20px; }
+    nav { padding: 20px 24px; }
+    .nav-links { gap: 20px; }
+    footer { padding: 32px 24px; flex-direction: column; gap: 20px; }
+    .works-controls { flex-direction: column; align-items: flex-start; gap: 20px; }
+    .lightbox { grid-template-columns: 1fr; grid-template-rows: auto 1fr; max-height: 95vh; }
+    .lightbox-image-wrap { aspect-ratio: 1; height: auto; }
+    .lightbox-details { padding: 32px 28px 28px; }
+    .lightbox-close { top: 16px; right: 20px; }
+    .lightbox-nav { bottom: 20px; right: 20px; }
+  }
+  @media (max-width: 520px) {
+    .artworks-grid { grid-template-columns: 1fr; }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-name" href="../../index.html">JCode</a>
+  <ul class="nav-links">
+    <li><a href="../../index.html#works">Works</a></li>
+    <li><a href="../index.html" class="active">Collect</a></li>
+    <li><a href="https://instagram.com/jmurillo.art" target="_blank">Instagram</a></li>
+    <li><a href="https://x.com/jmurillocode" target="_blank">X</a></li>
+  </ul>
+</nav>
+
+<!-- ── BREADCRUMB ── -->
+<div class="breadcrumb">
+  <a href="../index.html">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+      <line x1="16" y1="8" x2="3" y2="8" stroke="currentColor" stroke-width="1"/>
+      <polyline points="8,3 2,8 8,13" stroke="currentColor" stroke-width="1" fill="none"/>
+    </svg>
+    Collect
+  </a>
+</div>
+
+<!-- ── HEADER ── -->
+<header class="header">
+  <div class="header-left">
+    <p class="header-eyebrow">Generative &amp; AI · 2025</p>
+    <h1 class="header-title">Fracture</h1>
+  </div>
+
+  <div class="header-right">
+    <p class="header-intro">
+      15 generative portraits exploring digital identity and fragmentation. The first series to deeply embed AI into the creative workflow — three layers of code, algorithm, and machine interpretation converging into abstracted self.
+    </p>
+
+    <div class="header-stats">
+      <div>
+        <p class="stat-label">Supply</p>
+        <p class="stat-value">0 <span class="dim">/ 15</span></p>
+      </div>
+      <div>
+        <p class="stat-label">Floor</p>
+        <p class="stat-value loading" id="stat-floor">—</p>
+      </div>
+      <div>
+        <p class="stat-label">Chain</p>
+        <p class="stat-value">Ethereum</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ── ARTWORKS GRID ── -->
+<section class="works-section">
+  <div class="works-controls">
+    <span class="works-count" id="works-count">15 works · all collected</span>
+    <div class="works-filters" role="tablist">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="listed">Listed</button>
+      <button class="filter-btn" data-filter="collected">Collected</button>
+    </div>
+  </div>
+
+  <div class="artworks-grid" id="artworks-grid"></div>
+</section>
+
+<!-- ── LIGHTBOX ── -->
+<div class="lightbox-overlay" id="lightbox-overlay" role="dialog" aria-modal="true">
+  <button class="lightbox-close" id="lightbox-close">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+      <line x1="1" y1="1" x2="11" y2="11" stroke="currentColor" stroke-width="1.2"/>
+      <line x1="11" y1="1" x2="1" y2="11" stroke="currentColor" stroke-width="1.2"/>
+    </svg>
+    Close
+  </button>
+
+  <div class="lightbox" id="lightbox">
+    <div class="lightbox-image-wrap">
+      <img id="lb-image" src="" alt="">
+    </div>
+    <div class="lightbox-details">
+      <p class="lightbox-eyebrow" id="lb-eyebrow"></p>
+      <h2 class="lightbox-title" id="lb-title"></h2>
+      <div class="lightbox-divider"></div>
+      <div class="lightbox-meta">
+        <div class="lightbox-meta-row">
+          <span class="lightbox-meta-label">Owned by</span>
+          <span class="lightbox-meta-value" id="lb-owner"></span>
+        </div>
+        <div class="lightbox-meta-row">
+          <span class="lightbox-meta-label">Secondary</span>
+          <span class="lightbox-meta-value" id="lb-price"></span>
+        </div>
+        <div class="lightbox-meta-row">
+          <span class="lightbox-meta-label">Series</span>
+          <span class="lightbox-meta-value">Fracture · 2025</span>
+        </div>
+        <div class="lightbox-meta-row">
+          <span class="lightbox-meta-label">Chain</span>
+          <span class="lightbox-meta-value">Ethereum</span>
+        </div>
+      </div>
+      <div class="lightbox-action" id="lb-action"></div>
+    </div>
+  </div>
+
+  <div class="lightbox-nav">
+    <button class="lightbox-arrow" id="lb-prev" aria-label="Previous">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+        <line x1="13" y1="8" x2="3" y2="8" stroke="currentColor" stroke-width="1"/>
+        <polyline points="7,3 2,8 7,13" stroke="currentColor" stroke-width="1" fill="none"/>
+      </svg>
+    </button>
+    <button class="lightbox-arrow" id="lb-next" aria-label="Next">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+        <line x1="3" y1="8" x2="13" y2="8" stroke="currentColor" stroke-width="1"/>
+        <polyline points="9,3 14,8 9,13" stroke="currentColor" stroke-width="1" fill="none"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <span class="footer-name">JCode · 2026</span>
+  <ul class="footer-links">
+    <li><a href="../../index.html">Home</a></li>
+    <li><a href="../index.html">Collect</a></li>
+    <li><a href="https://instagram.com/jmurillo.art" target="_blank">Instagram</a></li>
+    <li><a href="https://x.com/jmurillocode" target="_blank">X</a></li>
+  </ul>
+</footer>
+
+<script>
+/* ─────────────────────────────────────────────
+   FRACTURE — Collect page · Phase 2a
+   ─────────────────────────────────────────────
+   Contract: 0x3306b22abc51d1b15df8681e13f0dbfa2c3f6758 (Transient Labs)
+   Token 1 is empty (skipped). Works are tokens 2–16.
+   Owner addresses pre-seeded from on-chain read 2026-04-17.
+   Secondary listings fetched live from Reservoir API.
+   ───────────────────────────────────────────── */
+
+const CONTRACT = '0x3306b22abc51d1b15df8681e13f0dbfa2c3f6758';
+
+const WORKS = [
+  { id: 'this-box-is-not-me',             tokenId: 2,  num: 1,  title: 'This Box Is Not Me',                      owner: '0x2fb24b1021e51fa23db91a9b995000181fda0963' },
+  { id: 'there-was-a-center-once',         tokenId: 3,  num: 2,  title: 'There Was a Center Once',                 owner: '0x0966d26521c18e82d11c40d64d3d1853ced5e707' },
+  { id: 'proof-of-presence',               tokenId: 4,  num: 3,  title: 'Proof of Presence',                       owner: '0x1a1427a73b7cb0f4ea3f71c6c8090c4366c8ebe1' },
+  { id: 'not-ready-to-upload',             tokenId: 5,  num: 4,  title: 'Not Ready to Upload',                     owner: '0x0966d26521c18e82d11c40d64d3d1853ced5e707' },
+  { id: 'make-me-whole-again',             tokenId: 6,  num: 5,  title: 'Make Me Whole Again',                     owner: '0x4ae5e79106a42e2e36bfc8ff3db0223e20341331' },
+  { id: 'i-tried-to-be-seen',              tokenId: 7,  num: 6,  title: 'I Tried to Be Seen',                      owner: '0xefe3f8fa7fa99d77f8e50c8484184906cfe02d12' },
+  { id: 'error-message-21',                tokenId: 8,  num: 7,  title: 'Error Message #21',                       owner: '0xc24ecd233085e2f7679193563ec5d295892f1705' },
+  { id: 'this-is-not-what-i-meant',        tokenId: 9,  num: 8,  title: 'This Is Not What I Meant',                owner: '0xa51d0eea78b5e31fd3390ad6c6e9fa574dc0f8e2' },
+  { id: 'you-werent-meant-to-understand',  tokenId: 10, num: 9,  title: "You Weren't Meant to Understand",         owner: '0x236446b98087bc8ac9cfae6c176189b4a3139acd' },
+  { id: 'you-almost-heard-me',             tokenId: 11, num: 10, title: 'You Almost Heard Me',                     owner: '0xefe3f8fa7fa99d77f8e50c8484184906cfe02d12' },
+  { id: 'unread-unheard-unfolding',         tokenId: 12, num: 11, title: 'Unread, Unheard, Unfolding',              owner: '0x0966d26521c18e82d11c40d64d3d1853ced5e707' },
+  { id: 'trying-to-make-contact',          tokenId: 13, num: 12, title: 'Trying to Make Contact',                  owner: '0x877f3bcb3c0ad49b64c404970d5671e00231b59c' },
+  { id: 'something-broke',                 tokenId: 14, num: 13, title: 'Something Broke Before It Reached You',   owner: '0xc13d84ba1c2ae5bd8dd827a057678719f2347966' },
+  { id: 'there-was-a-line',                tokenId: 15, num: 14, title: 'There Was a Line Between Us',              owner: '0xf05155f792819710da259c103d30e4b70178ea9f' },
+  { id: 'everything-meant-something',      tokenId: 16, num: 15, title: 'Everything Meant Something',              owner: '0xcf88fa6ee6d111b04be9b06ef6fad6bd6691b88c' },
+];
+
+/* ── Secondary listing data ── */
+let secondaryData = {};
+let dataLoaded = false;
+
+/* ── State ── */
+let currentFilter = 'all';
+
+/* ── DOM refs ── */
+const grid    = document.getElementById('artworks-grid');
+const countEl = document.getElementById('works-count');
+const floorEl = document.getElementById('stat-floor');
+
+/* ── Helpers ── */
+function shortAddr(addr) {
+  return addr.slice(0, 6) + '\u2026' + addr.slice(-4);
+}
+
+function getListingData(work) {
+  if (!dataLoaded) return null;
+  return secondaryData[work.tokenId] ?? null;
+}
+
+function getFloor() {
+  if (!dataLoaded) return null;
+  const prices = Object.values(secondaryData)
+    .filter(d => d.listed && d.priceEth !== null)
+    .map(d => d.priceEth);
+  return prices.length > 0 ? Math.min(...prices) : null;
+}
+
+/* ── Render ── */
+function render() {
+  const list = WORKS.filter(w => {
+    if (currentFilter === 'listed') {
+      const d = getListingData(w);
+      return dataLoaded && d && d.listed;
+    }
+    return true; // 'all' and 'collected' both show everything
+  });
+
+  const listedCount = dataLoaded
+    ? WORKS.filter(w => { const d = secondaryData[w.tokenId]; return d && d.listed; }).length
+    : null;
+
+  if (currentFilter === 'all') {
+    countEl.textContent = listedCount !== null && listedCount > 0
+      ? `15 works · ${listedCount} listed on secondary`
+      : '15 works · all collected';
+  } else if (currentFilter === 'listed') {
+    countEl.textContent = list.length > 0 ? `${list.length} listed` : '0 listed';
+  } else {
+    countEl.textContent = '15 collected';
+  }
+
+  if (list.length === 0) {
+    grid.innerHTML = `<div class="grid-empty">No works match this filter</div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(w => {
+    const numStr   = String(w.num).padStart(2, '0');
+    const listing  = getListingData(w);
+    const isListed = listing && listing.listed;
+    const workIndex = WORKS.indexOf(w);
+
+    const ribbon = isListed
+      ? `<span class="listed-ribbon">Listed</span>`
+      : `<span class="collected-ribbon">Collected</span>`;
+
+    let priceHtml;
+    if (!dataLoaded) {
+      priceHtml = `<span class="artwork-price-value loading">—</span>`;
+    } else if (isListed) {
+      priceHtml = `<span class="artwork-price-value">${listing.priceEth} ETH</span>`;
+    } else {
+      priceHtml = `<span class="artwork-price-value">Not listed</span>`;
+    }
+
+    let actionHtml;
+    if (isListed && listing.url) {
+      actionHtml = `
+        <a class="view-listing-btn" href="${listing.url}" target="_blank" rel="noopener">
+          ${listing.source || 'View'}
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+            <line x1="0" y1="6" x2="10" y2="6" stroke="currentColor" stroke-width="1"/>
+            <polyline points="6,2 11,6 6,10" stroke="currentColor" stroke-width="1" fill="none"/>
+          </svg>
+        </a>`;
+    } else {
+      actionHtml = `<button class="collected-btn" disabled>Collected</button>`;
+    }
+
+    return `
+      <article class="artwork-card${isListed ? ' listed' : ''}" data-index="${workIndex}">
+        <div class="artwork-image-wrap">
+          ${ribbon}
+          <img
+            class="artwork-image"
+            src="../../fracture/artworks-web/${w.id}.jpg"
+            alt="${w.title}"
+            loading="lazy"
+          >
+        </div>
+        <div class="artwork-body">
+          <p class="artwork-num">Work ${numStr}</p>
+          <h3 class="artwork-title">"${w.title}"</h3>
+          <div class="artwork-owner">
+            <span class="owner-label">Owned by</span>
+            <a class="owner-addr"
+               href="https://etherscan.io/address/${w.owner}"
+               target="_blank" rel="noopener">${shortAddr(w.owner)}</a>
+          </div>
+          <div class="artwork-footer">
+            <div class="artwork-price">
+              <span class="artwork-price-label">Secondary</span>
+              ${priceHtml}
+            </div>
+            ${actionHtml}
+          </div>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+/* ── Reservoir fetch ── */
+async function fetchSecondaryListings() {
+  const url = new URL('https://api.reservoir.tools/tokens/v7');
+  url.searchParams.set('collection', CONTRACT);
+  url.searchParams.set('limit', '20');
+  url.searchParams.set('sortBy', 'tokenId');
+  url.searchParams.set('sortDirection', 'asc');
+
+  try {
+    const res = await fetch(url.toString(), { headers: { 'x-api-key': 'demo' } });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    for (const item of data.tokens || []) {
+      const tokenId  = parseInt(item.token?.tokenId, 10);
+      const floorAsk = item.market?.floorAsk;
+      secondaryData[tokenId] = {
+        listed:   !!floorAsk?.price,
+        priceEth: floorAsk?.price?.amount?.decimal ?? null,
+        source:   floorAsk?.source?.name   ?? null,
+        url:      floorAsk?.source?.url    ?? null,
+      };
+    }
+  } catch (err) {
+    console.warn('[Fracture] Reservoir fetch failed — secondary prices unavailable.', err);
+  }
+
+  dataLoaded = true;
+
+  const floor = getFloor();
+  floorEl.classList.remove('loading');
+  if (floor !== null) {
+    floorEl.textContent = `${floor} ETH`;
+  } else {
+    floorEl.style.fontSize = '14px';
+    floorEl.style.paddingTop = '4px';
+    floorEl.textContent = 'Not listed';
+    floorEl.style.color = 'var(--text-dim)';
+  }
+
+  render();
+}
+
+/* ── Lightbox ── */
+const overlay   = document.getElementById('lightbox-overlay');
+const lbImage   = document.getElementById('lb-image');
+const lbEyebrow = document.getElementById('lb-eyebrow');
+const lbTitle   = document.getElementById('lb-title');
+const lbOwner   = document.getElementById('lb-owner');
+const lbPrice   = document.getElementById('lb-price');
+const lbAction  = document.getElementById('lb-action');
+const lbPrev    = document.getElementById('lb-prev');
+const lbNext    = document.getElementById('lb-next');
+
+let activeLightboxIndex = -1;
+
+function openLightbox(index) {
+  activeLightboxIndex = index;
+  populateLightbox(index);
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+  activeLightboxIndex = -1;
+}
+
+function populateLightbox(index) {
+  const w       = WORKS[index];
+  const numStr  = String(w.num).padStart(2, '0');
+  const listing = getListingData(w);
+  const isListed = listing && listing.listed;
+
+  lbImage.src = `../../fracture/artworks-web/${w.id}.jpg`;
+  lbImage.alt = w.title;
+  lbEyebrow.textContent = `Work ${numStr} · ${WORKS.length} works`;
+  lbTitle.textContent   = `"${w.title}"`;
+  lbOwner.innerHTML     = `<a href="https://etherscan.io/address/${w.owner}" target="_blank" rel="noopener">${shortAddr(w.owner)}</a>`;
+
+  if (!dataLoaded) {
+    lbPrice.textContent = '—';
+    lbPrice.classList.add('loading');
+  } else {
+    lbPrice.textContent = isListed ? `${listing.priceEth} ETH` : 'Not listed';
+    lbPrice.classList.remove('loading');
+  }
+
+  if (isListed && listing.url) {
+    lbAction.innerHTML = `
+      <a class="view-listing-btn" href="${listing.url}" target="_blank" rel="noopener">
+        View on ${listing.source || 'marketplace'}
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+          <line x1="0" y1="6" x2="10" y2="6" stroke="currentColor" stroke-width="1"/>
+          <polyline points="6,2 11,6 6,10" stroke="currentColor" stroke-width="1" fill="none"/>
+        </svg>
+      </a>`;
+  } else {
+    lbAction.innerHTML = `<button class="collected-btn" disabled>Collected</button>`;
+  }
+
+  lbPrev.disabled = index === 0;
+  lbNext.disabled = index === WORKS.length - 1;
+}
+
+/* ── Card click → open lightbox ── */
+grid.addEventListener('click', e => {
+  if (e.target.closest('.view-listing-btn') || e.target.closest('.collected-btn')) return;
+  const card = e.target.closest('.artwork-card');
+  if (!card) return;
+  const index = parseInt(card.dataset.index, 10);
+  if (!isNaN(index)) openLightbox(index);
+});
+
+overlay.addEventListener('click', e => { if (e.target === overlay) closeLightbox(); });
+document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+
+lbPrev.addEventListener('click', () => { if (activeLightboxIndex > 0) populateLightbox(--activeLightboxIndex); });
+lbNext.addEventListener('click', () => { if (activeLightboxIndex < WORKS.length - 1) populateLightbox(++activeLightboxIndex); });
+
+document.addEventListener('keydown', e => {
+  if (!overlay.classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft'  && activeLightboxIndex > 0)               populateLightbox(--activeLightboxIndex);
+  if (e.key === 'ArrowRight' && activeLightboxIndex < WORKS.length - 1) populateLightbox(++activeLightboxIndex);
+});
+
+/* ── Init ── */
+render();
+fetchSecondaryListings();
+</script>
+
+</body>
+</html>
