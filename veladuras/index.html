@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Veladuras — JCode</title>
+  <meta name="description" content="Veladuras — generative acrylic paintings by JCode, planned as sittings and painted live from the token hash. On Art Blocks.">
+  <meta property="og:title" content="Veladuras — JCode">
+  <meta property="og:description" content="Generative acrylic paintings, painted over several sittings, each one covering the last. On Art Blocks.">
+  <meta property="og:image" content="https://www.jcode.art/veladuras/artworks-web/veladuras-4.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080808; --text: #c8c8c8; --text-dim: #5a5a5a; --text-bright: #ebebeb;
+      --gold: #b89a56; --border: rgba(184,154,86,0.18); --line: #1c1c1c; --panel: #0d0d0d;
+    }
+    html { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; scroll-behavior: smooth; }
+    body { min-height: 100vh; }
+    a { color: inherit; }
+
+    /* ── NAV ── */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 28px 48px; background: linear-gradient(to bottom, var(--bg) 60%, transparent); }
+    .nav-name { font-size: 13px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text); text-decoration: none; }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); text-decoration: none; transition: color .3s; }
+    .nav-links a:hover { color: var(--gold); }
+
+    /* ── INTRO ── */
+    .intro { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; position: relative; border-bottom: 1px solid var(--border); }
+    .intro-left { display: flex; flex-direction: column; justify-content: center; padding: 120px 7vw 80px 48px; position: relative; }
+    .intro-left::after { content: ''; position: absolute; top: 10vh; bottom: 10vh; right: 0; width: 1px; background: linear-gradient(to bottom, transparent, var(--line) 20%, var(--line) 80%, transparent); }
+    .eyebrow { font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); margin-bottom: 36px; font-weight: 500; }
+    .intro-title { font-family: 'Lora', serif; font-size: clamp(56px, 6vw, 92px); font-weight: 400; color: var(--text-bright); letter-spacing: -0.02em; line-height: 1.0; margin-bottom: 28px; }
+    .intro-sub { font-family: 'Lora', serif; font-style: italic; font-size: clamp(15px, 1.2vw, 19px); line-height: 1.6; color: var(--text-dim); max-width: 420px; }
+    .intro-byline { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-dim); margin-top: 40px; }
+    .intro-right { display: flex; flex-direction: column; justify-content: center; padding: 120px 48px 80px 7vw; }
+    .divider { width: 28px; height: 1px; background: var(--gold); margin-bottom: 28px; }
+    .intro-description { font-family: 'Lora', serif; font-size: clamp(14px, 1.1vw, 17px); line-height: 1.8; color: var(--text); margin-bottom: 22px; }
+    .intro-description:last-child { margin-bottom: 0; }
+
+    /* ── SECTIONS ── */
+    section.block { padding: 120px 48px; border-bottom: 1px solid var(--border); }
+    .block-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 56px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+    .block-label { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); }
+    .block-note { font-size: 11px; letter-spacing: 0.1em; color: var(--text-dim); }
+
+    /* ── GALLERY ── */
+    .gallery { display: grid; grid-template-columns: repeat(6, 1fr); gap: 3px; }
+    .gallery figure { background: var(--panel); overflow: hidden; }
+    .gallery img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; display: block; filter: brightness(0.92); transition: filter .6s ease, transform .8s ease; }
+    .gallery figure:hover img { filter: brightness(1); transform: scale(1.02); }
+    .gallery figcaption { padding: 12px 14px 14px; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); line-height: 1.6; }
+    .gallery figcaption b { font-weight: 400; color: var(--text); display: block; }
+    .gallery-foot { margin-top: 28px; font-size: 12px; line-height: 1.7; color: var(--text-dim); max-width: 640px; }
+
+    /* ── STATEMENT ── */
+    .statement { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+    .statement p { font-family: 'Lora', serif; font-size: clamp(14px, 1.05vw, 16px); line-height: 1.85; color: var(--text); margin-bottom: 22px; }
+    .statement p.dim { color: var(--text-dim); }
+    .statement p:last-child { margin-bottom: 0; }
+
+    /* ── REGISTERS ── */
+    .registers { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; }
+    .register { background: var(--panel); padding: 32px 28px 36px; min-height: 220px; }
+    .register-n { font-size: 10px; letter-spacing: 0.24em; color: var(--gold); margin-bottom: 20px; }
+    .register h3 { font-family: 'Lora', serif; font-size: 22px; font-weight: 400; color: var(--text-bright); margin-bottom: 14px; }
+    .register p { font-size: 12px; line-height: 1.7; color: var(--text-dim); }
+
+    /* ── FACTS ── */
+    .facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; }
+    .fact { background: var(--panel); padding: 28px; }
+    .fact-k { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+    .fact-v { font-family: 'Lora', serif; font-size: 20px; color: var(--text-bright); line-height: 1.3; }
+    .fact-s { font-size: 11px; color: var(--text-dim); margin-top: 8px; line-height: 1.6; }
+
+    /* ── COLLECT ── */
+    .collect { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    .collect h2 { font-family: 'Lora', serif; font-size: clamp(32px, 3.4vw, 48px); font-weight: 400; color: var(--text-bright); line-height: 1.1; margin-bottom: 24px; }
+    .collect p { font-size: 13px; line-height: 1.8; color: var(--text-dim); max-width: 460px; margin-bottom: 28px; }
+    .btn { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); text-decoration: none; border: 1px solid var(--gold); padding: 14px 22px; transition: background .3s, color .3s; }
+    .btn:hover { background: var(--gold); color: var(--bg); }
+    .btn.muted { color: var(--text-dim); border-color: var(--line); pointer-events: none; }
+    .collect-side { font-size: 11px; letter-spacing: 0.1em; line-height: 2; color: var(--text-dim); text-transform: uppercase; }
+    .collect-side b { color: var(--text); font-weight: 400; }
+
+    /* ── FOOTER ── */
+    footer { padding: 48px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-name { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); }
+    .footer-links { display: flex; gap: 28px; list-style: none; }
+    .footer-links a { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); text-decoration: none; transition: color .3s; }
+    .footer-links a:hover { color: var(--gold); }
+
+    @media (max-width: 960px) {
+      nav { padding: 22px 24px; }
+      .nav-links { gap: 20px; }
+      .intro { grid-template-columns: 1fr; min-height: 0; }
+      .intro-left { padding: 110px 24px 40px; }
+      .intro-left::after { display: none; }
+      .intro-right { padding: 0 24px 64px; }
+      section.block { padding: 72px 24px; }
+      .gallery { grid-template-columns: repeat(3, 1fr); }
+      .statement, .collect { grid-template-columns: 1fr; gap: 32px; }
+      .registers { grid-template-columns: 1fr; }
+      .register { min-height: 0; }
+      .facts { grid-template-columns: 1fr 1fr; }
+      footer { padding: 32px 24px; flex-direction: column; gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-name" href="../index.html">JCode</a>
+  <ul class="nav-links">
+    <li><a href="../index.html#works">Works</a></li>
+    <li><a href="../collect/index.html">Collect</a></li>
+    <li><a href="https://instagram.com/jmurillo.art" target="_blank">Instagram</a></li>
+    <li><a href="https://x.com/jmurillocode" target="_blank">X</a></li>
+  </ul>
+</nav>
+
+<!-- ── INTRO ── -->
+<section class="intro">
+  <div class="intro-left">
+    <p class="eyebrow">2026 · Generative painting · Art Blocks</p>
+    <h1 class="intro-title">Veladuras</h1>
+    <p class="intro-sub">Abstracts in acrylic, painted over several sittings, each one covering the last.</p>
+    <p class="intro-byline">JCode · long-form generative · on-chain</p>
+  </div>
+  <div class="intro-right">
+    <div class="divider"></div>
+    <p class="intro-description">
+      Veladuras paints an abstract in acrylic the way a painter does: over several sittings, each one covering the last. A toned ground is worked and scraped; two or three generations of earlier shapes are laid under it and half-buried with a pale veil; the masses go on in an armature of warm against cool, lead against deep; a later sitting buries their edges in field colour and scrapes back through it before it dries; the newest paint goes on last.
+    </p>
+    <p class="intro-description">
+      Nothing is drawn — every mark is a loaded, drying, dirtying brush, a knife or a rag on a simulated acrylic surface, with the pigments mixing by Kubelka-Munk. What you see when the token loads is that process happening, and what remains is a surface with a memory.
+    </p>
+  </div>
+</section>
+
+<!-- ── OUTPUTS ── -->
+<section class="block" id="outputs">
+  <div class="block-header">
+    <span class="block-label">From the algorithm</span>
+    <span class="block-note">six outputs · unedited · portrait 3:4</span>
+  </div>
+  <div class="gallery">
+    <figure><img src="artworks-web/veladuras-4.jpg" alt="Veladuras — classic register, Ochre Slab palette"><figcaption><b>Classic</b>Ochre Slab</figcaption></figure>
+    <figure><img src="artworks-web/veladuras-17.jpg" alt="Veladuras — classic register, Oxblood &amp; Teal palette"><figcaption><b>Classic</b>Oxblood &amp; Teal</figcaption></figure>
+    <figure><img src="artworks-web/veladuras-6.jpg" alt="Veladuras — field register, Coral &amp; Verdigris palette"><figcaption><b>Field</b>Coral &amp; Verdigris</figcaption></figure>
+    <figure><img src="artworks-web/veladuras-3.jpg" alt="Veladuras — dense register, Ultramarine &amp; Rust palette"><figcaption><b>Dense</b>Ultramarine &amp; Rust</figcaption></figure>
+    <figure><img src="artworks-web/veladuras-1.jpg" alt="Veladuras — sparse register, Raw Canvas palette"><figcaption><b>Sparse</b>Raw Canvas</figcaption></figure>
+    <figure><img src="artworks-web/veladuras-13.jpg" alt="Veladuras — dark register, Slate &amp; Crayon palette"><figcaption><b>Dark</b>Slate &amp; Crayon</figcaption></figure>
+  </div>
+  <p class="gallery-foot">Each token is one painting, planned once from its hash and painted at any resolution to the same picture. On the token page you watch the sittings go down; that is not a loading animation, it is the work.</p>
+</section>
+
+<!-- ── STATEMENT ── -->
+<section class="block" id="statement">
+  <div class="block-header">
+    <span class="block-label">Statement</span>
+    <span class="block-note">on the covering</span>
+  </div>
+  <div class="statement">
+    <div>
+      <p>Veladuras is the second work on my acrylic paint simulation, after Pentimenti. Pentimenti was about the correction: a shape moved, the old one showing at the edge. Veladuras is about the covering.</p>
+      <p>Every real abstract I keep coming back to was painted over days. You can see it: a pink under a pink, an ochre ghost under a grey, a scraped patch where a knife went back through a veil that had not quite set. The picture is not a composition laid down once; it is the top of a stack, and the stack shows. I wanted an algorithm whose output has that property for the same reason a painting does — not painted to look layered, but layered.</p>
+      <p>So the engine is a surface, not a drawing tool. Each pixel carries a cured film and a wet film; a fresh coat over a cured one starts a new film and the old one becomes history; a knife scrapes the wet film down to a translucent facet and carries the surplus away; a dry brush catches only the ridges of earlier strokes; the colours mix as pigments mix, so a thin white over a dark is milk and a thin dark over a pale is a glaze. A brush is a reservoir that runs dry and picks up what it crosses. Bristles drift and lift. The blade wobbles. Nothing is stamped.</p>
+    </div>
+    <div>
+      <p class="dim">On that surface the painting is planned as sittings. A ground is worked thin, wiped, scraped. Two or three generations of earlier shapes go on in off-colours and are half-buried under a pale veil, and while the veil is open an unloaded blade goes back through it. The masses come in an armature — a dominant warm mass off-centre, a deep zone leaning on an edge, a smaller cool mass, a light slab, a few small darks — each painted first in another colour, cured, then built again in two or three tones, knifed, dragged out dry at the edge. A later sitting buries their edges in field colour and scrapes back before it closes. The newest paint goes on last. A third of the canvas is kept quiet and calmed with wide veils at the end. Then the responses: a contour re-drawn where a mass was moved, a hatch that notes it, a seam of fluorescent colour along a boundary, a ring drawn three times that never closes.</p>
+      <p class="dim">The vocabulary was not invented. I measured seven sets of paintings I love — their value range, their chroma, how massed they are at the scale of a hand, how much of the surface is dead-flat — and built to those numbers, and I sorted hundreds of outputs and fitted the weights to what I kept. The registers are the five densities those paintings actually came in. The palettes are theirs and mine.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── REGISTERS ── -->
+<section class="block" id="registers">
+  <div class="block-header">
+    <span class="block-label">Five registers</span>
+    <span class="block-note">the densities the paintings came in</span>
+  </div>
+  <div class="registers">
+    <div class="register"><p class="register-n">I</p><h3>Classic</h3><p>The worked greige. Two generations buried under a veil, the masses built and re-built, a third of the canvas kept quiet.</p></div>
+    <div class="register"><p class="register-n">II</p><h3>Sparse</h3><p>Raw canvas and a few events — bars or scattered incidents on an almost bare ground, one thing said.</p></div>
+    <div class="register"><p class="register-n">III</p><h3>Field</h3><p>One colour to the edges with an unpainted rim: a block, bands, three flat zones with a drawn contour, or a wash.</p></div>
+    <div class="register"><p class="register-n">IV</p><h3>Dense</h3><p>The all-over garden, or a collage of slabs — ten to fourteen ghosts under everything, the responses stacked.</p></div>
+    <div class="register"><p class="register-n">V</p><h3>Dark</h3><p>A grey or oxblood ground drawn on in crayon and pen, the light kept for loops and a scribble of sky blue.</p></div>
+  </div>
+</section>
+
+<!-- ── FACTS ── -->
+<section class="block" id="facts">
+  <div class="block-header">
+    <span class="block-label">The work</span>
+    <span class="block-note">what is on chain</span>
+  </div>
+  <div class="facts">
+    <div class="fact"><p class="fact-k">Format</p><p class="fact-v">Portrait 3:4</p><p class="fact-s">Every token. Planned nominally, so any resolution is the same picture.</p></div>
+    <div class="fact"><p class="fact-k">Palettes</p><p class="fact-v">27</p><p class="fact-s">Measured from the references, curated by hand. Weighted, not uniform.</p></div>
+    <div class="fact"><p class="fact-k">Engine</p><p class="fact-v">Pure JavaScript</p><p class="fact-s">No libraries. A two-film acrylic surface with Kubelka-Munk mixing, written for this work.</p></div>
+    <div class="fact"><p class="fact-k">Traits</p><p class="fact-v">Eleven</p><p class="fact-s">Register, mode, palette, lead, hand, quiet side, generations, masses, gesture, marks, notable.</p></div>
+  </div>
+</section>
+
+<!-- ── COLLECT ── -->
+<section class="block" id="collect">
+  <div class="collect">
+    <div>
+      <h2>Minting on Art Blocks</h2>
+      <p>Veladuras is being released as a long-form generative project on Art Blocks. The release date, edition size and price will be announced here and on Instagram and X.</p>
+      <a class="btn muted" href="#">Art Blocks page · coming</a>
+    </div>
+    <div class="collect-side">
+      <b>Status</b> — in staging<br>
+      <b>Edition</b> — to be announced<br>
+      <b>Chain</b> — Ethereum<br>
+      <b>Artist</b> — JCode
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-name">JCode · 2026</span>
+  <ul class="footer-links">
+    <li><a href="../index.html#works">Works</a></li>
+    <li><a href="https://instagram.com/jmurillo.art" target="_blank">Instagram</a></li>
+    <li><a href="https://x.com/jmurillocode" target="_blank">X</a></li>
+  </ul>
+</footer>
+
+</body>
+</html>
